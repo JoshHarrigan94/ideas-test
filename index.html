@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ORBIT</title>
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#02030a;
+  touch-action:none;
+  font-family:system-ui,sans-serif;
+}
+
+canvas{
+  display:block;
+}
+
+.ui{
+  position:fixed;
+  top:20px;
+  left:20px;
+  color:white;
+  z-index:10;
+}
+
+.title{
+  font-size:12px;
+  letter-spacing:4px;
+  opacity:.6;
+}
+
+.score{
+  font-size:32px;
+  font-weight:700;
+}
+
+.energy{
+  opacity:.8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="ui">
+  <div class="title">ORBIT</div>
+  <div class="score" id="score">0</div>
+  <div class="energy" id="energy">Energy: 0</div>
+</div>
+
+<canvas id="c"></canvas>
+
+<script>
+
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d");
+
+let w,h;
+
+function resize(){
+  w=canvas.width=window.innerWidth;
+  h=canvas.height=window.innerHeight;
+}
+
+window.addEventListener("resize",resize);
+resize();
+
+const scoreEl=document.getElementById("score");
+const energyEl=document.getElementById("energy");
+
+let score=0;
+let energy=0;
+
+const probes=[];
+const particles=[];
+const stars=[];
+
+const launcher={
+  x:0,
+  y:0
+};
+
+function placeLauncher(){
+  launcher.x=w/2;
+  launcher.y=h-120;
+}
+
+placeLauncher();
+
+const pointer={
+  down:false,
+  x:0,
+  y:0
+};
+
+class Star{
+
+  constructor(x,y,r,m){
+
+    this.x=x;
+    this.y=y;
+    this.r=r;
+    this.mass=m;
+    this.hp=Math.floor(m*2);
+
+  }
+
+  draw(){
+
+    const g=ctx.createRadialGradient(
+      this.x,this.y,0,
+      this.x,this.y,this.r*5
+    );
+
+    g.addColorStop(0,"#ffe29f");
+    g.addColorStop(.3,"#ffb347");
+    g.addColorStop(1,"transparent");
+
+    ctx.fillStyle=g;
+
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r*5,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="#fff5cc";
+
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+    ctx.fill();
+
+    ctx.fillStyle="white";
+    ctx.font="12px sans-serif";
+    ctx.textAlign="center";
+    ctx.fillText(this.hp,this.x,this.y+4);
+
+  }
+
+}
+
+class Probe{
+
+  constructor(vx,vy){
+
+    this.x=launcher.x;
+    this.y=launcher.y;
+
+    this.vx=vx;
+    this.vy=vy;
+
+    this.life=900;
+
+  }
+
+  update(){
+
+    this.life--;
+
+    stars.forEach(star=>{
+
+      const dx=star.x-this.x;
+      const dy=star.y-this.y;
+
+      const d=Math.sqrt(dx*dx+dy*dy);
+
+      const force=star.mass/(d*d+50);
+
+      this.vx+=dx*force;
+      this.vy+=dy*force;
+
+      if(d<star.r){
+
+        star.hp--;
+
+        score++;
+        energy++;
+
+        createBurst(this.x,this.y);
+
+        const nx=dx/d;
+        const ny=dy/d;
+
+        const dot=
+        this.vx*nx+
+        this.vy*ny;
+
+        this.vx-=2*dot*nx;
+        this.vy-=2*dot*ny;
+
+      }
+
+    });
+
+    this.x+=this.vx;
+    this.y+=this.vy;
+
+    particles.push({
+      x:this.x,
+      y:this.y,
+      life:20
+    });
+
+  }
+
+  draw(){
+
+    ctx.fillStyle="#7fffd4";
+
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,3,0,Math.PI*2);
+    ctx.fill();
+
+  }
+
+}
+
+function createBurst(x,y){
+
+  for(let i=0;i<10;i++){
+
+    particles.push({
+
+      x,
+      y,
+
+      vx:(Math.random()-.5)*4,
+      vy:(Math.random()-.5)*4,
+
+      life:40
+
+    });
+
+  }
+
+}
+
+function spawnSystem(){
+
+  for(let i=0;i<5;i++){
+
+    stars.push(
+      new Star(
+        100+Math.random()*(w-200),
+        100+Math.random()*(h*.55),
+        18+Math.random()*20,
+        120+Math.random()*120
+      )
+    );
+
+  }
+
+}
+
+spawnSystem();
+
+function fire(tx,ty){
+
+  const dx=tx-launcher.x;
+  const dy=ty-launcher.y;
+
+  const len=Math.sqrt(dx*dx+dy*dy);
+
+  const speed=8;
+
+  for(let i=0;i<10;i++){
+
+    const spread=(i-5)*0.015;
+
+    const a=Math.atan2(dy,dx)+spread;
+
+    probes.push(
+      new Probe(
+        Math.cos(a)*speed,
+        Math.sin(a)*speed
+      )
+    );
+
+  }
+
+}
+
+function pointerPos(e){
+
+  if(e.touches){
+
+    pointer.x=e.touches[0].clientX;
+    pointer.y=e.touches[0].clientY;
+
+  }else{
+
+    pointer.x=e.clientX;
+    pointer.y=e.clientY;
+
+  }
+
+}
+
+window.addEventListener("mousedown",e=>{
+  pointer.down=true;
+  pointerPos(e);
+});
+
+window.addEventListener("mousemove",pointerPos);
+
+window.addEventListener("mouseup",()=>{
+  if(pointer.down){
+    fire(pointer.x,pointer.y);
+  }
+  pointer.down=false;
+});
+
+window.addEventListener("touchstart",e=>{
+  pointer.down=true;
+  pointerPos(e);
+});
+
+window.addEventListener("touchmove",pointerPos);
+
+window.addEventListener("touchend",()=>{
+  if(pointer.down){
+    fire(pointer.x,pointer.y);
+  }
+  pointer.down=false;
+});
+
+function update(){
+
+  for(let i=probes.length-1;i>=0;i--){
+
+    probes[i].update();
+
+    if(
+      probes[i].life<=0 ||
+      probes[i].x<-100 ||
+      probes[i].x>w+100 ||
+      probes[i].y<-100 ||
+      probes[i].y>h+100
+    ){
+      probes.splice(i,1);
+    }
+
+  }
+
+  for(let i=particles.length-1;i>=0;i--){
+
+    const p=particles[i];
+
+    p.life--;
+
+    p.x+=(p.vx||0);
+    p.y+=(p.vy||0);
+
+    if(p.life<=0){
+      particles.splice(i,1);
+    }
+
+  }
+
+  for(let i=stars.length-1;i>=0;i--){
+
+    if(stars[i].hp<=0){
+
+      createBurst(
+        stars[i].x,
+        stars[i].y
+      );
+
+      stars.splice(i,1);
+
+    }
+
+  }
+
+  if(stars.length===0){
+
+    spawnSystem();
+
+  }
+
+  scoreEl.textContent=score;
+  energyEl.textContent=
+    "Energy: "+energy;
+
+}
+
+function draw(){
+
+  ctx.fillStyle="rgba(2,3,10,0.18)";
+  ctx.fillRect(0,0,w,h);
+
+  stars.forEach(s=>s.draw());
+
+  particles.forEach(p=>{
+
+    ctx.fillStyle=
+    `rgba(255,220,150,${
+      p.life/40
+    })`;
+
+    ctx.beginPath();
+    ctx.arc(
+      p.x,
+      p.y,
+      2,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fill();
+
+  });
+
+  probes.forEach(p=>p.draw());
+
+  ctx.fillStyle="#ffffff";
+
+  ctx.beginPath();
+  ctx.arc(
+    launcher.x,
+    launcher.y,
+    12,
+    0,
+    Math.PI*2
+  );
+
+  ctx.fill();
+
+  if(pointer.down){
+
+    ctx.strokeStyle=
+    "rgba(255,255,255,.35)";
+
+    ctx.lineWidth=2;
+
+    ctx.beginPath();
+
+    ctx.moveTo(
+      launcher.x,
+      launcher.y
+    );
+
+    ctx.lineTo(
+      pointer.x,
+      pointer.y
+    );
+
+    ctx.stroke();
+
+  }
+
+}
+
+function loop(){
+
+  update();
+  draw();
+
+  requestAnimationFrame(loop);
+
+}
+
+loop();
+
+</script>
+</body>
+</html>
