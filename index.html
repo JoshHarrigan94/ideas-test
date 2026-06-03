@@ -1,90 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>BETTER SVG Showcase</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BETTER OS — Animated SVG</title>
+
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-}
-body{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#09131f;
-  padding:24px;
-  font-family:Inter,system-ui,sans-serif;
-}
-svg{
-  width:min(100%,1100px);
-  height:auto;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 50% 20%, #263f55 0%, #07121f 48%, #03070d 100%);
+    overflow: hidden;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .stage {
+    width: min(1180px, 100vw);
+    padding: 18px;
+  }
+
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 30px 70px rgba(0,0,0,.45));
+  }
+
+  .float { animation: float 7s ease-in-out infinite; }
+  .floatSlow { animation: float 11s ease-in-out infinite; }
+  .spin { transform-origin: 500px 340px; animation: spin 18s linear infinite; }
+  .spinReverse { transform-origin: 500px 340px; animation: spinReverse 24s linear infinite; }
+  .pulse { animation: pulse 2.4s ease-in-out infinite; transform-origin: center; }
+  .dash { stroke-dasharray: 10 18; animation: dash 3.5s linear infinite; }
+  .scan { animation: scan 4.5s ease-in-out infinite; }
+  .blink { animation: blink 1.8s ease-in-out infinite; }
+  .wave { animation: wave 4s ease-in-out infinite; }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes spinReverse {
+    to { transform: rotate(-360deg); }
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: .55; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.045); }
+  }
+
+  @keyframes dash {
+    to { stroke-dashoffset: -140; }
+  }
+
+  @keyframes scan {
+    0%,100% { transform: translateY(-120px); opacity: 0; }
+    20%,70% { opacity: .75; }
+    50% { transform: translateY(120px); }
+  }
+
+  @keyframes blink {
+    0%,100% { opacity: .25; }
+    50% { opacity: 1; }
+  }
+
+  @keyframes wave {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
 </style>
 </head>
+
 <body>
-<svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg">
+<div class="stage">
+
+<svg viewBox="0 0 1000 680" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated athletic AI dashboard">
+
 <defs>
-<radialGradient id="bgGlow" cx="50%" cy="35%" r="70%">
-<stop offset="0%" stop-color="#F7F0E8"/>
-<stop offset="55%" stop-color="#E9EEF2"/>
-<stop offset="100%" stop-color="#102A43"/>
-</radialGradient>
-<linearGradient id="coralSteel" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0%" stop-color="#FF7A66"/>
-<stop offset="45%" stop-color="#FFB199"/>
-<stop offset="100%" stop-color="#12324A"/>
-</linearGradient>
-<linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.78"/>
-<stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.16"/>
-</linearGradient>
-<filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-<feDropShadow
-dx="0"
-dy="18"
-stdDeviation="18"
-flood-color="#071725"
-flood-opacity="0.28"/>
-</filter>
+  <radialGradient id="bg" cx="50%" cy="34%" r="76%">
+    <stop offset="0%" stop-color="#33516a"/>
+    <stop offset="48%" stop-color="#10263a"/>
+    <stop offset="100%" stop-color="#04101b"/>
+  </radialGradient>
+
+  <linearGradient id="coral" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#FF7A66"/>
+    <stop offset="55%" stop-color="#FFB19C"/>
+    <stop offset="100%" stop-color="#FFE4D8"/>
+  </linearGradient>
+
+  <linearGradient id="blueGlass" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#FFFFFF" stop-opacity=".30"/>
+    <stop offset="45%" stop-color="#FFFFFF" stop-opacity=".10"/>
+    <stop offset="100%" stop-color="#FFFFFF" stop-opacity=".04"/>
+  </linearGradient>
+
+  <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0%" stop-color="#FF7A66" stop-opacity="0"/>
+    <stop offset="50%" stop-color="#FF7A66" stop-opacity=".7"/>
+    <stop offset="100%" stop-color="#FF7A66" stop-opacity="0"/>
+  </linearGradient>
+
+  <filter id="glow">
+    <feGaussianBlur stdDeviation="5" result="blur"/>
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <filter id="heavyGlow">
+    <feGaussianBlur stdDeviation="13" result="blur"/>
+    <feColorMatrix in="blur" type="matrix"
+      values="1 0 0 0 1
+              0 .45 0 0 .35
+              0 0 .25 0 .25
+              0 0 0 .9 0"/>
+    <feMerge>
+      <feMergeNode/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+  </filter>
+
+  <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+    <path d="M32 0H0V32" fill="none" stroke="#fff" stroke-opacity=".08"/>
+    <circle cx="0" cy="0" r="1.2" fill="#fff" opacity=".22"/>
+  </pattern>
+
+  <clipPath id="screenClip">
+    <rect x="76" y="58" width="848" height="564" rx="42"/>
+  </clipPath>
 </defs>
-<rect width="900" height="620" fill="url(#bgGlow)"/>
-<rect width="900" height="620" fill="url(#microGrid)" opacity="0.65"/>
-<circle cx="450" cy="310" r="245" fill="#FFFFFF" opacity="0.08"/>
-<circle cx="450" cy="310" r="182" fill="#FFFFFF" opacity="0.07"/>
-<circle cx="450" cy="310" r="112" fill="#FFFFFF" opacity="0.08"/>
-<g filter="url(#softShadow)">
-</g>
-<g transform="translate(450 310)">
-<circle r="34" fill="url(#coralSteel)"/>
+
+<rect width="1000" height="680" fill="url(#bg)"/>
+<rect width="1000" height="680" fill="url(#grid)" opacity=".7"/>
+
+<g opacity=".18">
+  <circle cx="500" cy="340" r="290" fill="none" stroke="#fff"/>
+  <circle cx="500" cy="340" r="220" fill="none" stroke="#fff"/>
+  <circle cx="500" cy="340" r="150" fill="none" stroke="#fff"/>
 </g>
 
-ATHLETE OPERATING SYSTEM
-BETTER
-readiness · adaptation · performance
-SESSION READINESS
-87
-/100
+<g filter="url(#glow)">
+  <circle cx="190" cy="120" r="3" fill="#FFB19C" class="blink"/>
+  <circle cx="820" cy="190" r="4" fill="#fff" class="blink"/>
+  <circle cx="760" cy="560" r="3" fill="#FF7A66" class="blink"/>
+  <circle cx="255" cy="520" r="4" fill="#fff" class="blink"/>
 </g>
-<g transform="translate(168 405)">
 
-LOAD TOLERANCE
-HIGH
+<rect x="58" y="40" width="884" height="600" rx="54" fill="url(#blueGlass)" stroke="#fff" stroke-opacity=".35"/>
+<rect x="76" y="58" width="848" height="564" rx="42" fill="#081827" opacity=".86"/>
+<rect x="76" y="58" width="848" height="564" rx="42" fill="url(#grid)" opacity=".45"/>
+
+<g clip-path="url(#screenClip)">
+
+  <rect x="76" y="88" width="848" height="2" fill="#fff" opacity=".08"/>
+  <rect x="76" y="574" width="848" height="1" fill="#fff" opacity=".09"/>
+
+  <g class="scan">
+    <rect x="96" y="210" width="808" height="90" fill="url(#scanGrad)" opacity=".35"/>
+  </g>
+
+  <g font-family="Inter, Arial, sans-serif" fill="#fff">
+    <text x="116" y="116" font-size="14" letter-spacing="5" opacity=".55">BETTER OS</text>
+    <text x="116" y="162" font-size="48" font-weight="850">Athlete Signal Core</text>
+    <text x="118" y="190" font-size="15" opacity=".58">readiness · adaptation · recovery · output</text>
+
+    <text x="770" y="116" font-size="12" opacity=".5">LIVE MODEL</text>
+    <text x="770" y="152" font-size="34" font-weight="850" fill="#FFB19C">98.4%</text>
+  </g>
+
+  <g class="spin">
+    <ellipse cx="500" cy="342" rx="292" ry="88" fill="none" stroke="#FF7A66" stroke-opacity=".35" stroke-width="2" class="dash"/>
+    <ellipse cx="500" cy="342" rx="88" ry="292" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="2" transform="rotate(36 500 342)" class="dash"/>
+  </g>
+
+  <g class="spinReverse">
+    <ellipse cx="500" cy="342" rx="230" ry="68" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="2"/>
+    <ellipse cx="500" cy="342" rx="68" ry="230" fill="none" stroke="#FFB19C" stroke-opacity=".28" stroke-width="2" transform="rotate(-42 500 342)"/>
+  </g>
+
+  <g transform="translate(500 342)" filter="url(#heavyGlow)">
+    <circle r="116" fill="#020912" stroke="#fff" stroke-opacity=".18" stroke-width="2"/>
+    <circle r="94" fill="none" stroke="#FF7A66" stroke-width="13" stroke-linecap="round" stroke-dasharray="505 590" transform="rotate(-90)"/>
+    <circle r="70" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2" stroke-dasharray="5 12"/>
+    <circle r="48" fill="url(#coral)" class="pulse"/>
+    <path d="M-29 10 L-9 30 L35 -34" fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g font-family="Inter,Arial" fill="#fff" text-anchor="middle">
+    <text x="500" y="493" font-size="13" opacity=".45">SYSTEM READINESS</text>
+    <text x="500" y="536" font-size="48" font-weight="900">87</text>
+    <text x="560" y="532" font-size="18" opacity=".6">/100</text>
+  </g>
+
+  <g class="float">
+    <rect x="112" y="268" width="218" height="122" rx="26" fill="#fff" opacity=".095" stroke="#fff" stroke-opacity=".18"/>
+    <text x="136" y="304" fill="#fff" opacity=".55" font-size="12" font-family="Inter" letter-spacing="2">LOAD TOLERANCE</text>
+    <text x="136" y="350" fill="#fff" font-size="38" font-weight="850" font-family="Inter">HIGH</text>
+    <path d="M138 370 C170 340 194 392 226 358 C250 332 274 348 306 318" fill="none" stroke="#FF7A66" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <g class="floatSlow">
+    <rect x="670" y="262" width="218" height="128" rx="26" fill="#fff" opacity=".095" stroke="#fff" stroke-opacity=".18"/>
+    <text x="694" y="300" fill="#fff" opacity=".55" font-size="12" font-family="Inter" letter-spacing="2">RECOVERY DEBT</text>
+    <text x="694" y="346" fill="#fff" font-size="38" font-weight="850" font-family="Inter">LOW</text>
+    <rect x="696" y="365" width="148" height="8" rx="4" fill="#fff" opacity=".15"/>
+    <rect x="696" y="365" width="54" height="8" rx="4" fill="#FF7A66"/>
+  </g>
+
+  <g transform="translate(126 446)">
+    <rect width="210" height="92" rx="24" fill="#fff" opacity=".08" stroke="#fff" stroke-opacity=".16"/>
+    <text x="22" y="34" fill="#fff" opacity=".52" font-size="12" font-family="Inter" letter-spacing="2">ADAPTATION</text>
+    <text x="22" y="68" fill="#fff" font-size="28" font-weight="850" font-family="Inter">+12.8%</text>
+    <circle cx="168" cy="48" r="22" fill="none" stroke="#FFB19C" stroke-width="5" stroke-dasharray="95 140" transform="rotate(-90 168 48)"/>
+  </g>
+
+  <g transform="translate(666 446)">
+    <rect width="210" height="92" rx="24" fill="#fff" opacity=".08" stroke="#fff" stroke-opacity=".16"/>
+    <text x="22" y="34" fill="#fff" opacity=".52" font-size="12" font-family="Inter" letter-spacing="2">OUTPUT</text>
+    <text x="22" y="68" fill="#fff" font-size="28" font-weight="850" font-family="Inter">PRIME</text>
+    <path d="M138 66 L152 44 L166 55 L181 26" fill="none" stroke="#FF7A66" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g filter="url(#glow)">
+    <circle cx="266" cy="247" r="6" fill="#FF7A66"/>
+    <circle cx="730" cy="246" r="5" fill="#fff"/>
+    <circle cx="362" cy="506" r="5" fill="#FFB19C"/>
+    <circle cx="638" cy="504" r="5" fill="#fff"/>
+
+    <path d="M266 247 C340 275 410 306 500 342" fill="none" stroke="#FF7A66" stroke-opacity=".42" stroke-width="2"/>
+    <path d="M730 246 C650 274 590 306 500 342" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+    <path d="M362 506 C410 452 452 390 500 342" fill="none" stroke="#FFB19C" stroke-opacity=".36" stroke-width="2"/>
+    <path d="M638 504 C590 452 548 390 500 342" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="2"/>
+  </g>
+
+  <g class="wave" opacity=".75">
+    <path d="M118 590 C170 558 220 604 270 574 C320 544 370 594 420 562 C470 530 520 586 570 556 C620 526 670 582 720 552 C770 522 820 566 884 542"
+      fill="none" stroke="#FF7A66" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
 </g>
-<g transform="translate(536 405)">
 
-RECOVERY DEBT
-LOW
-</g>
-<circle cx="255" cy="214" r="6" fill="#FF7A66"/>
-<circle cx="650" cy="286" r="5" fill="#F7F0E8"/>
-<circle cx="345" cy="458" r="5" fill="#FFFFFF"/>
-<circle cx="705" cy="405" r="7" fill="#FF7A66"/>
-
-BUILT FROM SIGNALS · TRAINED BY FEEDBACK
 </svg>
+
+</div>
 </body>
 </html>
