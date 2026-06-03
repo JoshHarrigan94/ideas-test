@@ -3,290 +3,421 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tennis Court Motion Poster — Prompt 1</title>
+<title>Living Heart Data Art</title>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html,
-body {
-  width: 100%;
-  min-height: 100%;
-  background: #061728;
-  overflow: hidden;
-}
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 50% 40%, #142235 0%, #07111f 48%, #03070d 100%);
+    overflow: hidden;
+    font-family: system-ui, sans-serif;
+    color: white;
+  }
 
-body {
-  display: grid;
-  place-items: center;
-}
+  canvas {
+    width: 100vw;
+    height: 100vh;
+    display: block;
+  }
 
-svg {
-  width: 100vw;
-  height: 100vh;
-  display: block;
-  background: #061728;
-}
+  .hud {
+    position: fixed;
+    left: 24px;
+    top: 24px;
+    padding: 18px 20px;
+    width: 260px;
+    border: 1px solid rgba(255,255,255,.14);
+    background: rgba(5, 12, 22, .55);
+    backdrop-filter: blur(14px);
+    border-radius: 22px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.35);
+  }
 
-.blue-court {
-  fill: #078bd4;
-}
+  .eyebrow {
+    font-size: 11px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: #8fb7ff;
+    margin-bottom: 8px;
+  }
 
-.orange-court {
-  fill: #ff8a00;
-}
+  h1 {
+    font-size: 20px;
+    margin-bottom: 14px;
+  }
 
-.dark-world {
-  fill: #061728;
-}
+  .metric {
+    display: flex;
+    justify-content: space-between;
+    margin: 9px 0;
+    color: rgba(255,255,255,.72);
+    font-size: 13px;
+  }
 
-.court-line {
-  stroke: #fff7df;
-  stroke-width: 6;
-  stroke-linecap: square;
-  fill: none;
-}
-
-.net-post {
-  fill: #fff7df;
-}
-
-.net-post-side {
-  fill: #d8c7a9;
-}
-
-.net-line {
-  stroke: #071625;
-  stroke-width: 2;
-  opacity: 0.9;
-}
-
-.shadow {
-  fill: #051320;
-  opacity: 0.66;
-}
-
-.shadow-light {
-  fill: #051320;
-  opacity: 0.36;
-}
-
-.ball {
-  fill: #f5e800;
-}
-
-.ball-side {
-  fill: #071625;
-  opacity: 0.82;
-}
-
-.machine-red {
-  fill: #9b140f;
-}
-
-.machine-dark {
-  fill: #4d0908;
-}
-
-.machine-yellow {
-  fill: #f5e800;
-}
-
-.machine-wheel {
-  fill: #4c3028;
-}
-
-.texture {
-  opacity: 0.15;
-  mix-blend-mode: multiply;
-}
-
-.speck-blue {
-  fill: #003e68;
-}
-
-.speck-orange {
-  fill: #814300;
-}
-
-.ladder-line {
-  stroke: #fff7df;
-  stroke-width: 3;
-  fill: none;
-  opacity: 0.75;
-}
+  .metric strong {
+    color: white;
+    font-variant-numeric: tabular-nums;
+  }
 </style>
 </head>
 
 <body>
+  <canvas id="canvas"></canvas>
 
-<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+  <aside class="hud">
+    <div class="eyebrow">Data Art Simulation</div>
+    <h1>Cardiac Flow</h1>
+    <div class="metric"><span>Heart rate</span><strong id="hr">72 bpm</strong></div>
+    <div class="metric"><span>Stroke volume</span><strong id="sv">70 ml</strong></div>
+    <div class="metric"><span>Cardiac output</span><strong id="co">5.0 L/min</strong></div>
+    <div class="metric"><span>Oxygenation</span><strong id="oxy">98%</strong></div>
+  </aside>
 
-  <!-- background -->
-  <rect class="dark-world" width="1200" height="900" />
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-  <!-- orange court area -->
-  <path class="orange-court" d="M0 0 H560 L420 275 L0 405 Z" />
+const hrEl = document.getElementById("hr");
+const svEl = document.getElementById("sv");
+const coEl = document.getElementById("co");
+const oxyEl = document.getElementById("oxy");
 
-  <!-- blue main court -->
-  <path class="blue-court" d="M560 0 H1200 V900 H0 V405 L420 275 Z" />
+let w, h, dpr;
 
-  <!-- far dark upper strip -->
-  <path class="dark-world" d="M560 0 H1200 L1060 75 H515 Z" opacity="0.9" />
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  w = canvas.width = innerWidth * dpr;
+  h = canvas.height = innerHeight * dpr;
+  canvas.style.width = innerWidth + "px";
+  canvas.style.height = innerHeight + "px";
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  w = innerWidth;
+  h = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
 
-  <!-- court white lines -->
-  <g>
-    <path class="court-line" d="M0 565 L705 0" />
-    <path class="court-line" d="M0 725 L885 0" />
-    <path class="court-line" d="M0 890 L1070 0" />
+const particles = [];
+const flowPaths = [];
 
-    <path class="court-line" d="M0 565 L1200 320" />
-    <path class="court-line" d="M0 725 L1200 475" />
-    <path class="court-line" d="M0 890 L1200 630" />
+const state = {
+  bpm: 72,
+  strokeVolume: 70,
+  oxygen: 98,
+  time: 0,
+  beatPhase: 0,
+  beatStrength: 0
+};
 
-    <path class="court-line" d="M530 0 L1200 365" />
-    <path class="court-line" d="M330 900 L1200 715" />
-  </g>
+function lerp(a, b, t) {
+  return a + (b - a) * t;
+}
 
-  <!-- umpire chair on orange court -->
-  <g transform="translate(180 10)">
-    <path class="shadow-light" d="M-55 190 L110 245 L220 205 L48 150 Z" />
+function pulseCurve(x) {
+  return Math.pow(Math.sin(Math.PI * x), 3);
+}
 
-    <path class="ladder-line" d="M0 0 L0 160 L-50 220" />
-    <path class="ladder-line" d="M65 0 L65 165 L120 230" />
-    <path class="ladder-line" d="M0 0 H65" />
-    <path class="ladder-line" d="M0 45 H65" />
-    <path class="ladder-line" d="M0 90 H65" />
+function heartPoint(t, scale = 1) {
+  const x = 16 * Math.pow(Math.sin(t), 3);
+  const y =
+    13 * Math.cos(t) -
+    5 * Math.cos(2 * t) -
+    2 * Math.cos(3 * t) -
+    Math.cos(4 * t);
 
-    <path class="ladder-line" d="M65 55 L120 35" />
-    <path class="ladder-line" d="M65 95 L125 75" />
-    <path class="ladder-line" d="M65 135 L130 112" />
-  </g>
+  return {
+    x: x * scale,
+    y: -y * scale
+  };
+}
 
-  <!-- net shadow -->
-  <path
-    class="shadow"
-    d="M300 290
-       L1135 765
-       L1100 815
-       L265 340 Z"
-  />
+function makePath(points, type) {
+  flowPaths.push({ points, type });
+}
 
-  <!-- net posts -->
-  <g>
-    <path class="shadow" d="M330 210 L385 250 L365 290 L310 250 Z" />
+function rebuildPaths() {
+  flowPaths.length = 0;
 
-    <path class="net-post-side" d="M326 158 L350 174 L350 287 L326 270 Z" />
-    <path class="net-post" d="M350 174 L370 163 L370 276 L350 287 Z" />
-    <path class="net-post" d="M326 158 L346 147 L370 163 L350 174 Z" />
+  const cx = w * 0.55;
+  const cy = h * 0.53;
+  const s = Math.min(w, h) * 0.018;
 
-    <path class="net-post-side" d="M1122 620 L1148 636 L1148 735 L1122 720 Z" />
-    <path class="net-post" d="M1148 636 L1168 625 L1168 724 L1148 735 Z" />
-    <path class="net-post" d="M1122 620 L1142 608 L1168 625 L1148 636 Z" />
-  </g>
+  makePath([
+    { x: cx - 260, y: cy - 170 },
+    { x: cx - 160, y: cy - 120 },
+    { x: cx - 95, y: cy - 35 },
+    { x: cx - 55, y: cy + 80 }
+  ], "venous");
 
-  <!-- net mesh -->
-  <g>
-    <path d="M358 183 L1155 642 L1155 710 L358 252 Z" fill="rgba(255,247,223,0.13)" />
+  makePath([
+    { x: cx - 45, y: cy + 80 },
+    { x: cx + 20, y: cy + 30 },
+    { x: cx + 60, y: cy - 70 },
+    { x: cx + 210, y: cy - 165 }
+  ], "pulmonary");
 
-    <!-- top and bottom cords -->
-    <path class="net-line" d="M358 183 L1155 642" stroke-width="5" />
-    <path class="net-line" d="M358 252 L1155 710" stroke-width="4" />
+  makePath([
+    { x: cx + 175, y: cy - 125 },
+    { x: cx + 85, y: cy - 65 },
+    { x: cx + 40, y: cy + 70 },
+    { x: cx + 10, y: cy + 160 }
+  ], "oxygenatedIn");
 
-    <!-- vertical mesh -->
-    <g>
-      <line class="net-line" x1="380" y1="196" x2="380" y2="265" />
-      <line class="net-line" x1="420" y1="219" x2="420" y2="288" />
-      <line class="net-line" x1="460" y1="242" x2="460" y2="311" />
-      <line class="net-line" x1="500" y1="265" x2="500" y2="334" />
-      <line class="net-line" x1="540" y1="288" x2="540" y2="357" />
-      <line class="net-line" x1="580" y1="311" x2="580" y2="380" />
-      <line class="net-line" x1="620" y1="334" x2="620" y2="403" />
-      <line class="net-line" x1="660" y1="357" x2="660" y2="426" />
-      <line class="net-line" x1="700" y1="380" x2="700" y2="449" />
-      <line class="net-line" x1="740" y1="403" x2="740" y2="472" />
-      <line class="net-line" x1="780" y1="426" x2="780" y2="495" />
-      <line class="net-line" x1="820" y1="449" x2="820" y2="518" />
-      <line class="net-line" x1="860" y1="472" x2="860" y2="541" />
-      <line class="net-line" x1="900" y1="495" x2="900" y2="564" />
-      <line class="net-line" x1="940" y1="518" x2="940" y2="587" />
-      <line class="net-line" x1="980" y1="541" x2="980" y2="610" />
-      <line class="net-line" x1="1020" y1="564" x2="1020" y2="633" />
-      <line class="net-line" x1="1060" y1="587" x2="1060" y2="656" />
-      <line class="net-line" x1="1100" y1="610" x2="1100" y2="679" />
-    </g>
+  makePath([
+    { x: cx + 12, y: cy + 130 },
+    { x: cx + 85, y: cy + 35 },
+    { x: cx + 125, y: cy - 120 },
+    { x: cx + 75, y: cy - 245 },
+    { x: cx - 50, y: cy - 255 }
+  ], "arterial");
+}
 
-    <!-- horizontal mesh -->
-    <g>
-      <path class="net-line" d="M358 197 L1155 656" />
-      <path class="net-line" d="M358 211 L1155 670" />
-      <path class="net-line" d="M358 225 L1155 684" />
-      <path class="net-line" d="M358 239 L1155 698" />
-    </g>
-  </g>
+function samplePath(path, t) {
+  const pts = path.points;
+  const total = pts.length - 1;
+  const raw = t * total;
+  const i = Math.min(Math.floor(raw), total - 1);
+  const local = raw - i;
 
-  <!-- ball machine shadow -->
-  <path class="shadow" d="M930 135 L1040 190 L990 230 L885 172 Z" />
+  const a = pts[i];
+  const b = pts[i + 1];
 
-  <!-- ball machine -->
-  <g transform="translate(920 85)">
-    <ellipse class="machine-dark" cx="45" cy="38" rx="34" ry="22" />
-    <ellipse class="machine-red" cx="45" cy="30" rx="38" ry="24" />
-    <ellipse class="machine-yellow" cx="32" cy="24" rx="7" ry="6" />
-    <ellipse class="machine-yellow" cx="47" cy="22" rx="8" ry="6" />
-    <ellipse class="machine-yellow" cx="60" cy="27" rx="7" ry="6" />
+  return {
+    x: lerp(a.x, b.x, local),
+    y: lerp(a.y, b.y, local)
+  };
+}
 
-    <rect class="machine-red" x="28" y="52" width="36" height="58" rx="12" />
-    <rect class="machine-dark" x="20" y="102" width="54" height="18" rx="8" />
+function spawnParticle(type) {
+  const path = flowPaths.find(p => p.type === type);
+  if (!path) return;
 
-    <ellipse class="machine-wheel" cx="12" cy="120" rx="14" ry="10" />
-    <ellipse class="machine-wheel" cx="80" cy="120" rx="14" ry="10" />
-  </g>
+  particles.push({
+    path,
+    t: 0,
+    speed: type === "arterial" ? 0.012 : 0.008,
+    size: Math.random() * 2.4 + 1.6,
+    offset: (Math.random() - 0.5) * 16,
+    life: 1,
+    spin: Math.random() * Math.PI * 2
+  });
+}
 
-  <!-- tennis balls -->
-  <g>
-    <path class="shadow" d="M225 287 C245 292 255 304 246 314 C224 310 211 301 214 292 Z" />
-    <circle class="ball" cx="225" cy="280" r="10" />
-    <path class="ball-side" d="M217 273 C226 276 232 283 235 291 C226 290 218 284 217 273 Z" />
+function drawHeart(cx, cy, scale, beat) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.scale(scale * (1 + beat * 0.035), scale * (1 - beat * 0.018));
 
-    <path class="shadow" d="M535 435 C555 441 565 452 556 462 C534 458 521 449 524 440 Z" />
-    <circle class="ball" cx="535" cy="428" r="10" />
-    <path class="ball-side" d="M527 421 C536 424 542 431 545 439 C536 438 528 432 527 421 Z" />
+  const grad = ctx.createRadialGradient(-40, -30, 20, 0, 20, 260);
+  grad.addColorStop(0, "rgba(255, 110, 95, .95)");
+  grad.addColorStop(.45, "rgba(155, 25, 45, .92)");
+  grad.addColorStop(1, "rgba(52, 8, 22, .98)");
 
-    <path class="shadow" d="M590 463 C610 469 620 480 611 490 C589 486 576 477 579 468 Z" />
-    <circle class="ball" cx="590" cy="456" r="10" />
-    <path class="ball-side" d="M582 449 C591 452 597 459 600 467 C591 466 583 460 582 449 Z" />
+  ctx.beginPath();
+  for (let i = 0; i <= 360; i++) {
+    const t = (i / 360) * Math.PI * 2;
+    const p = heartPoint(t, 13);
+    if (i === 0) ctx.moveTo(p.x, p.y);
+    else ctx.lineTo(p.x, p.y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.shadowColor = "rgba(255, 50, 70, .5)";
+  ctx.shadowBlur = 40 + beat * 40;
+  ctx.fill();
 
-    <path class="shadow" d="M900 707 C920 713 930 724 921 734 C899 730 886 721 889 712 Z" />
-    <circle class="ball" cx="900" cy="700" r="10" />
-    <path class="ball-side" d="M892 693 C901 696 907 703 910 711 C901 710 893 704 892 693 Z" />
+  ctx.shadowBlur = 0;
+  ctx.lineWidth = 1.2;
+  ctx.strokeStyle = "rgba(255,255,255,.14)";
+  ctx.stroke();
 
-    <path class="shadow" d="M1110 492 C1130 498 1140 509 1131 519 C1109 515 1096 506 1099 497 Z" />
-    <circle class="ball" cx="1110" cy="485" r="10" />
-    <path class="ball-side" d="M1102 478 C1111 481 1117 488 1120 496 C1111 495 1103 489 1102 478 Z" />
-  </g>
+  // chamber hints
+  ctx.globalCompositeOperation = "screen";
+  ctx.strokeStyle = "rgba(255,170,170,.18)";
+  ctx.lineWidth = 3;
 
-  <!-- texture -->
-  <g class="texture">
-    <circle class="speck-blue" cx="120" cy="480" r="1.4" />
-    <circle class="speck-blue" cx="240" cy="530" r="1.1" />
-    <circle class="speck-blue" cx="410" cy="620" r="1.5" />
-    <circle class="speck-blue" cx="660" cy="430" r="1.2" />
-    <circle class="speck-blue" cx="790" cy="760" r="1.3" />
-    <circle class="speck-blue" cx="980" cy="390" r="1.1" />
-    <circle class="speck-blue" cx="1100" cy="820" r="1.5" />
+  ctx.beginPath();
+  ctx.ellipse(-58, -8, 52, 95, -0.2, 0, Math.PI * 2);
+  ctx.stroke();
 
-    <circle class="speck-orange" cx="95" cy="155" r="1.3" />
-    <circle class="speck-orange" cx="185" cy="255" r="1.1" />
-    <circle class="speck-orange" cx="335" cy="90" r="1.4" />
-    <circle class="speck-orange" cx="410" cy="225" r="1.2" />
-  </g>
+  ctx.beginPath();
+  ctx.ellipse(48, 14, 62, 120, 0.18, 0, Math.PI * 2);
+  ctx.stroke();
 
-</svg>
+  ctx.beginPath();
+  ctx.moveTo(-8, -105);
+  ctx.bezierCurveTo(-22, -35, -18, 45, -4, 132);
+  ctx.stroke();
 
+  ctx.restore();
+}
+
+function drawVessels(beat) {
+  for (const path of flowPaths) {
+    ctx.beginPath();
+    path.points.forEach((p, i) => {
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    });
+
+    const isBlue = path.type === "venous" || path.type === "pulmonary";
+    ctx.lineWidth = path.type === "arterial" ? 22 + beat * 7 : 15 + beat * 3;
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    ctx.strokeStyle = isBlue
+      ? "rgba(50, 130, 255, .22)"
+      : "rgba(255, 45, 50, .26)";
+    ctx.stroke();
+
+    ctx.lineWidth *= .42;
+    ctx.strokeStyle = isBlue
+      ? "rgba(110, 190, 255, .35)"
+      : "rgba(255, 120, 95, .42)";
+    ctx.stroke();
+  }
+}
+
+function drawParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.t += p.speed * (1 + state.beatStrength * 1.9);
+
+    if (p.t >= 1) {
+      particles.splice(i, 1);
+      continue;
+    }
+
+    const pos = samplePath(p.path, p.t);
+    const wave = Math.sin(p.t * Math.PI * 8 + p.spin) * p.offset;
+
+    const isBlue = p.path.type === "venous" || p.path.type === "pulmonary";
+    const r = p.size * (1 + state.beatStrength * 1.2);
+
+    ctx.beginPath();
+    ctx.arc(pos.x + wave * 0.18, pos.y + wave * 0.18, r, 0, Math.PI * 2);
+
+    ctx.fillStyle = isBlue
+      ? `rgba(80, 170, 255, ${0.35 + p.life * .45})`
+      : `rgba(255, 55, 45, ${0.36 + p.life * .5})`;
+
+    ctx.shadowColor = isBlue ? "#4aaaff" : "#ff3d2f";
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+}
+
+function drawBackground(time) {
+  ctx.clearRect(0, 0, w, h);
+
+  const cx = w * 0.55;
+  const cy = h * 0.52;
+
+  const grad = ctx.createRadialGradient(cx, cy, 40, cx, cy, Math.max(w, h) * .7);
+  grad.addColorStop(0, "rgba(80, 20, 45, .28)");
+  grad.addColorStop(.45, "rgba(8, 20, 36, .64)");
+  grad.addColorStop(1, "rgba(2, 5, 10, 1)");
+
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, w, h);
+
+  // faint data grid
+  ctx.strokeStyle = "rgba(255,255,255,.035)";
+  ctx.lineWidth = 1;
+
+  for (let x = 0; x < w; x += 48) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+
+  for (let y = 0; y < h; y += 48) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+}
+
+function drawECG(time, beat) {
+  const baseY = h - 90;
+  const startX = 60;
+  const width = w - 120;
+
+  ctx.save();
+  ctx.strokeStyle = "rgba(125, 210, 255, .55)";
+  ctx.lineWidth = 2;
+  ctx.shadowColor = "#7dd2ff";
+  ctx.shadowBlur = 12;
+
+  ctx.beginPath();
+
+  for (let i = 0; i < width; i++) {
+    const x = startX + i;
+    const u = (i / width) * 5 + time * 1.8;
+    const phase = u % 1;
+
+    let y = baseY + Math.sin(u * Math.PI * 2) * 4;
+
+    if (phase > .18 && phase < .22) y -= 10;
+    if (phase > .235 && phase < .255) y += 18;
+    if (phase > .255 && phase < .275) y -= 42;
+    if (phase > .275 && phase < .305) y += 16;
+
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  }
+
+  ctx.stroke();
+  ctx.restore();
+}
+
+function updateMetrics(time) {
+  state.bpm = Math.round(72 + Math.sin(time * .35) * 7 + state.beatStrength * 5);
+  state.strokeVolume = Math.round(70 + Math.sin(time * .23) * 5);
+  state.oxygen = Math.round(97 + Math.sin(time * .18) * 1);
+
+  const co = (state.bpm * state.strokeVolume / 1000).toFixed(1);
+
+  hrEl.textContent = `${state.bpm} bpm`;
+  svEl.textContent = `${state.strokeVolume} ml`;
+  coEl.textContent = `${co} L/min`;
+  oxyEl.textContent = `${state.oxygen}%`;
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  state.time += 0.016;
+
+  const secondsPerBeat = 60 / state.bpm;
+  state.beatPhase = (state.time % secondsPerBeat) / secondsPerBeat;
+  state.beatStrength = pulseCurve(state.beatPhase);
+
+  rebuildPaths();
+
+  const spawnRate = 4 + state.beatStrength * 18;
+
+  for (let i = 0; i < spawnRate; i++) {
+    if (Math.random() < .28) spawnParticle("venous");
+    if (Math.random() < .20) spawnParticle("pulmonary");
+    if (Math.random() < .24) spawnParticle("oxygenatedIn");
+    if (Math.random() < .30) spawnParticle("arterial");
+  }
+
+  drawBackground(state.time);
+  drawVessels(state.beatStrength);
+  drawHeart(w * .55, h * .53, Math.min(w, h) * .0062, state.beatStrength);
+  drawParticles();
+  drawECG(state.time, state.beatStrength);
+  updateMetrics(state.time);
+}
+
+animate();
+</script>
 </body>
 </html>
