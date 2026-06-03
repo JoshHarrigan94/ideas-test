@@ -1,345 +1,286 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Runner POV</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
-body{
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  background:#0e1014;
-  font-family:system-ui,sans-serif;
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #05070d;
 }
 
-.scene{
-  width:100vw;
-  height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+.stage {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), transparent 28%),
+    linear-gradient(180deg, #07101d 0%, #03050a 100%);
 }
 
-svg{
-  width:min(500px,90vw);
-  height:min(700px,90vh);
+svg {
+  width: min(100vw, 680px);
+  height: 100vh;
+  display: block;
 }
 
-.track{
-  fill:#171a20;
+/* CAMERA */
+.camera {
+  animation: cameraBob 1s ease-in-out infinite;
+  transform-origin: 50% 82%;
 }
 
-.grain{
-  opacity:.08;
+/* TRACK */
+.track {
+  fill: #0f172a;
 }
 
-.lane{
-  stroke:#f5f1e8;
-  stroke-width:4;
-  stroke-linecap:round;
-  opacity:.6;
-  animation:trackScroll 1.4s linear infinite;
+.track-grain circle {
+  fill: rgba(255,255,255,.16);
 }
 
-.delay1{
-  animation-delay:-0.35s;
+.lane-line {
+  stroke: #f8fafc;
+  stroke-width: 3;
+  stroke-linecap: round;
+  opacity: .82;
 }
 
-.delay2{
-  animation-delay:-0.7s;
+.track-move {
+  animation: trackMove 1s linear infinite;
 }
 
-.delay3{
-  animation-delay:-1.05s;
+.cross-line {
+  stroke: #f8fafc;
+  stroke-width: 4;
+  opacity: .9;
+  animation: crossLine 2s linear infinite;
 }
 
-.shoe{
-  transform-origin:center;
-  filter:drop-shadow(0 14px 10px rgba(0,0,0,.35));
+/* FEET */
+.foot {
+  transform-origin: center;
 }
 
-.left{
-  animation:leftStride 1.15s ease-in-out infinite;
+.left-foot {
+  animation: leftStride 1s ease-in-out infinite;
 }
 
-.right{
-  animation:rightStride 1.15s ease-in-out infinite;
+.right-foot {
+  animation: rightStride 1s ease-in-out infinite;
 }
 
-.sock{
-  fill:#f0d4ba;
+.shoe {
+  fill: #ff6b35;
 }
 
-.upper{
-  fill:#ff6d5e;
+.shoe-side {
+  fill: #c94422;
 }
 
-.sole{
-  fill:#f7f4eb;
+.sole {
+  fill: #f8fafc;
 }
 
-.detail{
-  fill:#222630;
-  opacity:.22;
+.sock {
+  fill: #e8c8aa;
 }
 
-.shadow{
-  fill:black;
-  opacity:.15;
+.lace {
+  stroke: rgba(15, 23, 42, .38);
+  stroke-width: 4;
+  stroke-linecap: round;
 }
 
-@keyframes trackScroll{
-  from{
-    transform:translateY(-180px);
+.foot-shadow {
+  fill: rgba(0,0,0,.42);
+  filter: blur(5px);
+  transform-origin: center;
+}
+
+.left-shadow {
+  animation: leftShadow 1s ease-in-out infinite;
+}
+
+.right-shadow {
+  animation: rightShadow 1s ease-in-out infinite;
+}
+
+/* ANIMATION */
+@keyframes cameraBob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(8px) scale(1.01); }
+}
+
+@keyframes trackMove {
+  from { transform: translateY(-190px); }
+  to { transform: translateY(190px); }
+}
+
+@keyframes crossLine {
+  0% {
+    transform: translateY(-260px) scaleX(.45);
+    opacity: 0;
   }
-  to{
-    transform:translateY(180px);
+  15% {
+    opacity: .75;
   }
-}
-
-@keyframes leftStride{
-  0%{
-    transform:translate(112px,70px) rotate(-5deg) scale(1.02);
-    opacity:1;
+  70% {
+    opacity: .75;
   }
-
-  25%{
-    transform:translate(105px,150px) rotate(-2deg);
-    opacity:.95;
-  }
-
-  50%{
-    transform:translate(98px,250px) rotate(3deg) scale(.94);
-    opacity:.55;
-  }
-
-  75%{
-    transform:translate(94px,340px) rotate(6deg) scale(.90);
-    opacity:.18;
-  }
-
-  100%{
-    transform:translate(112px,70px) rotate(-5deg) scale(1.02);
-    opacity:1;
-  }
-}
-
-@keyframes rightStride{
-  0%{
-    transform:translate(232px,340px) rotate(6deg) scale(.90);
-    opacity:.18;
-  }
-
-  25%{
-    transform:translate(226px,250px) rotate(3deg) scale(.94);
-    opacity:.55;
-  }
-
-  50%{
-    transform:translate(218px,150px) rotate(-2deg);
-    opacity:.95;
-  }
-
-  75%{
-    transform:translate(210px,70px) rotate(-5deg) scale(1.02);
-    opacity:1;
-  }
-
-  100%{
-    transform:translate(232px,340px) rotate(6deg) scale(.90);
-    opacity:.18;
+  100% {
+    transform: translateY(440px) scaleX(1.6);
+    opacity: 0;
   }
 }
 
-.title{
-  position:fixed;
-  top:24px;
-  left:50%;
-  transform:translateX(-50%);
-  color:white;
-  letter-spacing:.25em;
-  text-transform:uppercase;
-  font-size:12px;
-  opacity:.5;
+@keyframes leftStride {
+  0% {
+    transform: translate(160px, 386px) rotate(-9deg) scale(1.18);
+    opacity: 1;
+  }
+  25% {
+    transform: translate(148px, 315px) rotate(-5deg) scale(1.02);
+    opacity: .95;
+  }
+  50% {
+    transform: translate(138px, 245px) rotate(1deg) scale(.84);
+    opacity: .72;
+  }
+  75% {
+    transform: translate(126px, 178px) rotate(5deg) scale(.62);
+    opacity: .18;
+  }
+  100% {
+    transform: translate(160px, 386px) rotate(-9deg) scale(1.18);
+    opacity: 1;
+  }
+}
+
+@keyframes rightStride {
+  0% {
+    transform: translate(294px, 178px) rotate(5deg) scale(.62);
+    opacity: .18;
+  }
+  25% {
+    transform: translate(282px, 245px) rotate(1deg) scale(.84);
+    opacity: .72;
+  }
+  50% {
+    transform: translate(272px, 315px) rotate(-5deg) scale(1.02);
+    opacity: .95;
+  }
+  75% {
+    transform: translate(260px, 386px) rotate(-9deg) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(294px, 178px) rotate(5deg) scale(.62);
+    opacity: .18;
+  }
+}
+
+@keyframes leftShadow {
+  0% { transform: translate(164px, 478px) scale(1.2); opacity: .38; }
+  50% { transform: translate(142px, 310px) scale(.74); opacity: .15; }
+  100% { transform: translate(164px, 478px) scale(1.2); opacity: .38; }
+}
+
+@keyframes rightShadow {
+  0% { transform: translate(298px, 310px) scale(.74); opacity: .15; }
+  50% { transform: translate(266px, 478px) scale(1.2); opacity: .38; }
+  100% { transform: translate(298px, 310px) scale(.74); opacity: .15; }
 }
 </style>
 </head>
 
 <body>
+<main class="stage">
 
-<div class="title">
-Runner POV
-</div>
+<svg viewBox="0 0 420 620" xmlns="http://www.w3.org/2000/svg">
 
-<div class="scene">
+  <defs>
+    <clipPath id="clip">
+      <rect x="0" y="0" width="420" height="620" rx="0"/>
+    </clipPath>
 
-<svg viewBox="0 0 420 520">
+    <radialGradient id="trackLight" cx="50%" cy="38%" r="78%">
+      <stop offset="0%" stop-color="#17233d"/>
+      <stop offset="100%" stop-color="#07101d"/>
+    </radialGradient>
+  </defs>
 
-<rect
-  class="track"
-  width="420"
-  height="520"
-  rx="34"
-/>
+  <g clip-path="url(#clip)" class="camera">
 
-<g class="grain">
-  <circle cx="70" cy="70" r="1.4" fill="white"/>
-  <circle cx="210" cy="120" r="1" fill="white"/>
-  <circle cx="335" cy="95" r="1.2" fill="white"/>
-  <circle cx="130" cy="310" r="1" fill="white"/>
-  <circle cx="305" cy="390" r="1.5" fill="white"/>
-  <circle cx="80" cy="455" r="1.1" fill="white"/>
-  <circle cx="180" cy="460" r="1.2" fill="white"/>
-  <circle cx="330" cy="230" r="1.3" fill="white"/>
-</g>
+    <!-- track base -->
+    <path class="track" d="M-90 620 L110 0 H310 L510 620 Z" />
+    <path fill="url(#trackLight)" d="M-90 620 L110 0 H310 L510 620 Z" opacity=".85"/>
 
-<!-- left lane -->
+    <!-- track grain -->
+    <g class="track-grain">
+      <circle cx="80" cy="70" r="1"/>
+      <circle cx="190" cy="110" r="1.2"/>
+      <circle cx="315" cy="80" r="1"/>
+      <circle cx="110" cy="210" r="1.1"/>
+      <circle cx="260" cy="235" r="1"/>
+      <circle cx="340" cy="340" r="1.4"/>
+      <circle cx="72" cy="430" r="1"/>
+      <circle cx="210" cy="485" r="1.2"/>
+      <circle cx="315" cy="525" r="1"/>
+      <circle cx="145" cy="570" r="1"/>
+    </g>
 
-<line class="lane"
-      x1="72"
-      y1="-80"
-      x2="42"
-      y2="90"/>
+    <!-- moving lane structure -->
+    <g class="track-move">
+      <line class="lane-line" x1="115" y1="-200" x2="-88" y2="620"/>
+      <line class="lane-line" x1="305" y1="-200" x2="508" y2="620"/>
 
-<line class="lane delay1"
-      x1="72"
-      y1="110"
-      x2="42"
-      y2="280"/>
+      <line class="cross-line" x1="125" y1="0" x2="295" y2="0"/>
+      <line class="cross-line" x1="125" y1="-260" x2="295" y2="-260" style="animation-delay:-1s"/>
+    </g>
 
-<line class="lane delay2"
-      x1="72"
-      y1="300"
-      x2="42"
-      y2="470"/>
+    <!-- soft centre shadow -->
+    <ellipse cx="210" cy="560" rx="150" ry="44" fill="rgba(0,0,0,.28)" filter="blur(16px)"/>
 
-<line class="lane delay3"
-      x1="72"
-      y1="490"
-      x2="42"
-      y2="660"/>
+    <!-- shadows -->
+    <ellipse class="foot-shadow left-shadow" cx="0" cy="0" rx="42" ry="16"/>
+    <ellipse class="foot-shadow right-shadow" cx="0" cy="0" rx="42" ry="16"/>
 
-<!-- right lane -->
+    <!-- LEFT FOOT -->
+    <g class="foot left-foot">
+      <ellipse class="sock" cx="0" cy="-42" rx="21" ry="31"/>
+      <path class="shoe" d="M-35 -10 C-38 38 -27 88 0 104 C27 88 38 38 35 -10 C28 -42 -28 -42 -35 -10Z"/>
+      <path class="shoe-side" d="M0 -36 C23 -30 32 -8 30 28 C26 65 14 88 0 104 C11 50 9 5 0 -36Z" opacity=".45"/>
+      <path class="sole" d="M-31 72 C-20 104 20 104 31 72 L27 99 C17 122 -17 122 -27 99Z"/>
+      <line class="lace" x1="-17" y1="8" x2="17" y2="22"/>
+      <line class="lace" x1="-18" y1="30" x2="18" y2="44"/>
+    </g>
 
-<line class="lane"
-      x1="348"
-      y1="-80"
-      x2="378"
-      y2="90"/>
+    <!-- RIGHT FOOT -->
+    <g class="foot right-foot">
+      <ellipse class="sock" cx="0" cy="-42" rx="21" ry="31"/>
+      <path class="shoe" d="M-35 -10 C-38 38 -27 88 0 104 C27 88 38 38 35 -10 C28 -42 -28 -42 -35 -10Z"/>
+      <path class="shoe-side" d="M0 -36 C23 -30 32 -8 30 28 C26 65 14 88 0 104 C11 50 9 5 0 -36Z" opacity=".45"/>
+      <path class="sole" d="M-31 72 C-20 104 20 104 31 72 L27 99 C17 122 -17 122 -27 99Z"/>
+      <line class="lace" x1="-17" y1="8" x2="17" y2="22"/>
+      <line class="lace" x1="-18" y1="30" x2="18" y2="44"/>
+    </g>
 
-<line class="lane delay1"
-      x1="348"
-      y1="110"
-      x2="378"
-      y2="280"/>
-
-<line class="lane delay2"
-      x1="348"
-      y1="300"
-      x2="378"
-      y2="470"/>
-
-<line class="lane delay3"
-      x1="348"
-      y1="490"
-      x2="378"
-      y2="660"/>
-
-<!-- left foot -->
-
-<g class="shoe left">
-
-  <ellipse
-    class="shadow"
-    cx="36"
-    cy="120"
-    rx="24"
-    ry="10"/>
-
-  <ellipse
-    class="upper"
-    cx="36"
-    cy="85"
-    rx="29"
-    ry="56"/>
-
-  <ellipse
-    class="sock"
-    cx="36"
-    cy="26"
-    rx="20"
-    ry="20"/>
-
-  <path
-    class="sole"
-    d="M14 100
-       Q36 124 58 100
-       L56 122
-       Q36 143 16 122 Z"/>
-
-  <path
-    class="detail"
-    d="M20 65
-       Q36 78 52 65
-       L52 74
-       Q36 88 20 74 Z"/>
-
-</g>
-
-<!-- right foot -->
-
-<g class="shoe right">
-
-  <ellipse
-    class="shadow"
-    cx="36"
-    cy="120"
-    rx="24"
-    ry="10"/>
-
-  <ellipse
-    class="upper"
-    cx="36"
-    cy="85"
-    rx="29"
-    ry="56"/>
-
-  <ellipse
-    class="sock"
-    cx="36"
-    cy="26"
-    rx="20"
-    ry="20"/>
-
-  <path
-    class="sole"
-    d="M14 100
-       Q36 124 58 100
-       L56 122
-       Q36 143 16 122 Z"/>
-
-  <path
-    class="detail"
-    d="M20 65
-       Q36 78 52 65
-       L52 74
-       Q36 88 20 74 Z"/>
-
-</g>
-
+  </g>
 </svg>
 
-</div>
-
+</main>
 </body>
 </html>
