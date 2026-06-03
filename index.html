@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Raisin</title>
+
 <style>
 :root{
   --bg:#f6efe7;
@@ -11,171 +13,420 @@
   --outline:#2f2a28;
   --fur:#c58f57;
   --fur-dark:#9a6b3f;
+  --cream:#e8d4bf;
   --nose:#2f2a28;
   --eye:#1f1f1f;
   --tongue:#ff8a8a;
 }
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
+
 body{
   min-height:100vh;
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 50% 20%,#fffaf5 0%,#f6efe7 55%,#e9d9c7 100%);
   display:flex;
   align-items:center;
   justify-content:center;
   font-family:system-ui,sans-serif;
 }
+
 .stage{
-  width:min(700px,95vw);
+  width:min(720px,95vw);
   aspect-ratio:1/1;
   background:var(--card);
-  border-radius:32px;
+  border-radius:36px;
   overflow:hidden;
   position:relative;
-  box-shadow:
-    0 20px 60px rgba(0,0,0,.08);
+  box-shadow:0 24px 70px rgba(0,0,0,.10);
 }
+
 svg{
   width:100%;
   height:100%;
   display:block;
 }
+
 .label{
   position:absolute;
   top:20px;
   left:20px;
-  font-weight:700;
+  font-weight:800;
   color:#5d524c;
+  letter-spacing:.02em;
 }
+
+.sub{
+  position:absolute;
+  top:48px;
+  left:20px;
+  color:#8a7b72;
+  font-size:13px;
+}
+
 </style>
 </head>
+
 <body>
+
 <div class="stage">
-<div class="label">
-Raisin • Awake
-</div>
+
+<div class="label" id="moodLabel">Raisin • Awake</div>
+<div class="sub" id="behaviourLabel">idle breathing</div>
+
 <svg viewBox="0 0 800 800">
-  <!-- shadow -->
-  <!-- tail -->
+
+  <ellipse
+    id="shadow"
+    cx="400"
+    cy="620"
+    rx="175"
+    ry="38"
+    fill="#000"
+    opacity=".08"/>
+
   <g id="tailGroup">
-<path
-  id="tail"
-  d="M560 500
-     C650 430,
-     680 380,
-     660 330"
-  fill="none"
-  stroke="#9a6b3f"
-  stroke-width="34"
-  stroke-linecap="round"/>
+    <path
+      id="tail"
+      d="M560 500 C650 430 680 380 660 330"
+      fill="none"
+      stroke="#9a6b3f"
+      stroke-width="34"
+      stroke-linecap="round"/>
   </g>
-  <!-- body -->
-  <!-- chest -->
-  <!-- head -->
+
+  <ellipse
+    id="body"
+    cx="400"
+    cy="500"
+    rx="170"
+    ry="120"
+    fill="#c58f57"/>
+
+  <ellipse
+    id="chest"
+    cx="360"
+    cy="530"
+    rx="70"
+    ry="70"
+    fill="#e8d4bf"/>
+
+  <ellipse
+    id="leftPaw"
+    cx="330"
+    cy="605"
+    rx="42"
+    ry="26"
+    fill="#9a6b3f"/>
+
+  <ellipse
+    id="rightPaw"
+    cx="470"
+    cy="605"
+    rx="42"
+    ry="26"
+    fill="#9a6b3f"/>
+
   <g id="headGroup">
-<circle
-  cx="400"
-  cy="320"
-  r="115"
-  fill="#c58f57"/>
-<!-- ears -->
-<ellipse
-  id="leftEar"
-  cx="320"
-  cy="320"
-  rx="38"
-  ry="95"
-  fill="#9a6b3f"/>
-<ellipse
-  id="rightEar"
-  cx="480"
-  cy="320"
-  rx="38"
-  ry="95"
-  fill="#9a6b3f"/>
-<!-- eyes -->
-<ellipse
-  id="leftEye"
-  cx="360"
-  cy="305"
-  rx="10"
-  ry="16"
-  fill="#1f1f1f"/>
-<ellipse
-  id="rightEye"
-  cx="440"
-  cy="305"
-  rx="10"
-  ry="16"
-  fill="#1f1f1f"/>
-<!-- muzzle -->
-<ellipse
-  cx="400"
-  cy="355"
-  rx="55"
-  ry="42"
-  fill="#e8d4bf"/>
-<!-- nose -->
-<ellipse
-  id="nose"
-  cx="400"
-  cy="345"
-  rx="18"
-  ry="12"
-  fill="#2f2a28"/>
-<!-- mouth -->
-<path
-  id="mouth"
-  d="M385 370
-     Q400 382
-     415 370"
-  fill="none"
-  stroke="#2f2a28"
-  stroke-width="4"
-  stroke-linecap="round"/>
+
+    <g id="leftEarGroup">
+      <ellipse
+        id="leftEar"
+        cx="318"
+        cy="325"
+        rx="42"
+        ry="102"
+        fill="#9a6b3f"/>
+    </g>
+
+    <g id="rightEarGroup">
+      <ellipse
+        id="rightEar"
+        cx="482"
+        cy="325"
+        rx="42"
+        ry="102"
+        fill="#9a6b3f"/>
+    </g>
+
+    <circle
+      id="head"
+      cx="400"
+      cy="320"
+      r="116"
+      fill="#c58f57"/>
+
+    <path
+      d="M348 235 C378 212 426 212 452 238"
+      fill="none"
+      stroke="#d7a06a"
+      stroke-width="20"
+      stroke-linecap="round"
+      opacity=".5"/>
+
+    <g id="eyeGroup">
+      <ellipse
+        id="leftEye"
+        cx="360"
+        cy="305"
+        rx="11"
+        ry="17"
+        fill="#1f1f1f"/>
+
+      <ellipse
+        id="rightEye"
+        cx="440"
+        cy="305"
+        rx="11"
+        ry="17"
+        fill="#1f1f1f"/>
+
+      <circle cx="364" cy="299" r="3" fill="#fff" opacity=".85"/>
+      <circle cx="444" cy="299" r="3" fill="#fff" opacity=".85"/>
+    </g>
+
+    <ellipse
+      id="muzzle"
+      cx="400"
+      cy="358"
+      rx="58"
+      ry="44"
+      fill="#e8d4bf"/>
+
+    <ellipse
+      id="nose"
+      cx="400"
+      cy="346"
+      rx="19"
+      ry="13"
+      fill="#2f2a28"/>
+
+    <path
+      id="mouth"
+      d="M384 371 Q400 384 416 371"
+      fill="none"
+      stroke="#2f2a28"
+      stroke-width="4"
+      stroke-linecap="round"/>
+
   </g>
+
 </svg>
+
 </div>
+
 <script>
-const head =
-document.getElementById("headGroup");
-const body =
-document.getElementById("body");
-const tail =
-document.getElementById("tailGroup");
-const leftEye =
-document.getElementById("leftEye");
-const rightEye =
-document.getElementById("rightEye");
+const $ = id => document.getElementById(id);
+
+const moodLabel = $("moodLabel");
+const behaviourLabel = $("behaviourLabel");
+
+const headGroup = $("headGroup");
+const body = $("body");
+const chest = $("chest");
+const tailGroup = $("tailGroup");
+const leftEye = $("leftEye");
+const rightEye = $("rightEye");
+const eyeGroup = $("eyeGroup");
+const nose = $("nose");
+const mouth = $("mouth");
+const leftEarGroup = $("leftEarGroup");
+const rightEarGroup = $("rightEarGroup");
+const shadow = $("shadow");
+
 let t = 0;
+
+let mood = "idle";
+let behaviour = "idle breathing";
+
+let headTilt = 0;
+let targetHeadTilt = 0;
+
+let lookX = 0;
+let targetLookX = 0;
+
+let blink = 1;
+let blinking = false;
+
+let sniffPower = 0;
+let tailEnergy = 1;
+
+function setBehaviour(text){
+  behaviour = text;
+  behaviourLabel.textContent = text;
+}
+
+function randomBetween(min,max){
+  return min + Math.random() * (max - min);
+}
+
+function scheduleBlink(){
+  setTimeout(() => {
+    doBlink();
+    scheduleBlink();
+  }, randomBetween(2500,8500));
+}
+
+function doBlink(){
+  if(blinking) return;
+
+  blinking = true;
+
+  blink = 0.15;
+
+  setTimeout(() => {
+    blink = 1;
+    blinking = false;
+  }, 140);
+}
+
+function scheduleCurious(){
+  setTimeout(() => {
+    doCurious();
+    scheduleCurious();
+  }, randomBetween(5000,12000));
+}
+
+function doCurious(){
+  mood = "curious";
+  moodLabel.textContent = "Raisin • Curious";
+  setBehaviour("head tilt");
+
+  targetHeadTilt = Math.random() > 0.5 ? 12 : -12;
+  tailEnergy = 1.25;
+
+  setTimeout(() => {
+    targetHeadTilt = 0;
+    mood = "idle";
+    moodLabel.textContent = "Raisin • Awake";
+    setBehaviour("idle breathing");
+    tailEnergy = 1;
+  }, 1700);
+}
+
+function scheduleLook(){
+  setTimeout(() => {
+    doLookAround();
+    scheduleLook();
+  }, randomBetween(4000,9500));
+}
+
+function doLookAround(){
+  setBehaviour("looking around");
+
+  targetLookX = Math.random() > 0.5 ? 10 : -10;
+
+  setTimeout(() => {
+    targetLookX = 0;
+    setBehaviour("idle breathing");
+  }, 1200);
+}
+
+function scheduleSniff(){
+  setTimeout(() => {
+    doSniff();
+    scheduleSniff();
+  }, randomBetween(6000,14000));
+}
+
+function doSniff(){
+  setBehaviour("sniff sniff");
+
+  let sniffs = 0;
+
+  const interval = setInterval(() => {
+    sniffPower = 1;
+    sniffs++;
+
+    setTimeout(() => {
+      sniffPower = 0;
+    }, 120);
+
+    if(sniffs >= 3){
+      clearInterval(interval);
+
+      setTimeout(() => {
+        setBehaviour("idle breathing");
+      }, 500);
+    }
+  }, 260);
+}
+
 function animate(){
   t += 0.03;
-  // breathing
-  const breathe =
-    Math.sin(t) * 4;
-  body.setAttribute(
-    "cy",
-    500 + breathe
-  );
-  head.setAttribute(
+
+  const breathe = Math.sin(t) * 4;
+
+  headTilt += (targetHeadTilt - headTilt) * 0.06;
+  lookX += (targetLookX - lookX) * 0.08;
+
+  const sniff = sniffPower * Math.sin(t * 24) * 3;
+
+  body.setAttribute("cy", 500 + breathe);
+  chest.setAttribute("cy", 530 + breathe * 1.1);
+
+  shadow.setAttribute("rx", 175 + breathe * 1.2);
+
+  headGroup.setAttribute(
     "transform",
-    `translate(0 ${breathe * .6})`
+    `
+    translate(${lookX * 0.45} ${breathe * .55 + sniff})
+    rotate(${headTilt} 400 340)
+    `
   );
-  // tail wag
-  const wag =
-    Math.sin(t * 2.5) * 10;
-  tail.setAttribute(
+
+  const earLag = headTilt * -0.35;
+
+  leftEarGroup.setAttribute(
+    "transform",
+    `rotate(${earLag - 2} 318 260)`
+  );
+
+  rightEarGroup.setAttribute(
+    "transform",
+    `rotate(${earLag + 2} 482 260)`
+  );
+
+  const wag = Math.sin(t * 3.2) * 12 * tailEnergy;
+
+  tailGroup.setAttribute(
     "transform",
     `rotate(${wag} 560 500)`
   );
-  requestAnimationFrame(
-    animate
+
+  leftEye.setAttribute("ry", 17 * blink);
+  rightEye.setAttribute("ry", 17 * blink);
+
+  eyeGroup.setAttribute(
+    "transform",
+    `translate(${lookX * 0.35} 0)`
   );
+
+  nose.setAttribute(
+    "transform",
+    `translate(0 ${sniff * 0.7}) scale(${1 + sniffPower * 0.05})`
+  );
+
+  mouth.setAttribute(
+    "d",
+    mood === "curious"
+      ? "M386 371 Q400 378 414 371"
+      : "M384 371 Q400 384 416 371"
+  );
+
+  requestAnimationFrame(animate);
 }
+
+scheduleBlink();
+scheduleCurious();
+scheduleLook();
+scheduleSniff();
 animate();
 </script>
+
 </body>
 </html>
