@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Runner POV</title>
+<title>Track Loop — Pass 1</title>
 
 <style>
 * {
@@ -15,272 +15,247 @@
 html,
 body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
+  background: #071625;
   overflow: hidden;
-  background: #05070d;
 }
 
-.stage {
-  width: 100vw;
-  height: 100vh;
+body {
   display: grid;
   place-items: center;
-  background:
-    radial-gradient(circle at 50% 20%, rgba(255,255,255,.08), transparent 28%),
-    linear-gradient(180deg, #07101d 0%, #03050a 100%);
 }
 
 svg {
-  width: min(100vw, 680px);
+  width: 100vw;
   height: 100vh;
   display: block;
+  background: #071625;
 }
 
-/* CAMERA */
-.camera {
-  animation: cameraBob 1s ease-in-out infinite;
-  transform-origin: 50% 82%;
+.track-red {
+  fill: #e94319;
 }
 
-/* TRACK */
-.track {
-  fill: #0f172a;
+.track-red-dark {
+  fill: #c93416;
+  opacity: 0.45;
 }
 
-.track-grain circle {
-  fill: rgba(255,255,255,.16);
+.infield {
+  fill: #0077b8;
 }
 
-.lane-line {
-  stroke: #f8fafc;
+.outer-blue {
+  fill: #062033;
+}
+
+.line {
+  fill: none;
+  stroke: #ffe7bf;
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.thin-line {
+  fill: none;
+  stroke: #ffe7bf;
   stroke-width: 3;
   stroke-linecap: round;
-  opacity: .82;
+  opacity: 0.92;
 }
 
-.track-move {
-  animation: trackMove 1s linear infinite;
-}
-
-.cross-line {
-  stroke: #f8fafc;
-  stroke-width: 4;
-  opacity: .9;
-  animation: crossLine 2s linear infinite;
-}
-
-/* FEET */
-.foot {
-  transform-origin: center;
-}
-
-.left-foot {
-  animation: leftStride 1s ease-in-out infinite;
-}
-
-.right-foot {
-  animation: rightStride 1s ease-in-out infinite;
-}
-
-.shoe {
-  fill: #ff6b35;
-}
-
-.shoe-side {
-  fill: #c94422;
-}
-
-.sole {
-  fill: #f8fafc;
-}
-
-.sock {
-  fill: #e8c8aa;
-}
-
-.lace {
-  stroke: rgba(15, 23, 42, .38);
+.mark {
+  stroke: #ffe7bf;
   stroke-width: 4;
   stroke-linecap: round;
+  opacity: 0.9;
 }
 
-.foot-shadow {
-  fill: rgba(0,0,0,.42);
-  filter: blur(5px);
-  transform-origin: center;
+.number {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  fill: #ffd9aa;
+  opacity: 0.72;
 }
 
-.left-shadow {
-  animation: leftShadow 1s ease-in-out infinite;
+.shadow {
+  fill: #06121f;
+  opacity: 0.72;
 }
 
-.right-shadow {
-  animation: rightShadow 1s ease-in-out infinite;
+.hurdle-white {
+  fill: #ffe7bf;
 }
 
-/* ANIMATION */
-@keyframes cameraBob {
-  0%, 100% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(8px) scale(1.01); }
+.hurdle-dark {
+  fill: #06121f;
 }
 
-@keyframes trackMove {
-  from { transform: translateY(-190px); }
-  to { transform: translateY(190px); }
+.texture {
+  opacity: 0.13;
+  mix-blend-mode: multiply;
 }
 
-@keyframes crossLine {
-  0% {
-    transform: translateY(-260px) scaleX(.45);
-    opacity: 0;
-  }
-  15% {
-    opacity: .75;
-  }
-  70% {
-    opacity: .75;
-  }
-  100% {
-    transform: translateY(440px) scaleX(1.6);
-    opacity: 0;
-  }
+.speck {
+  fill: #581d12;
+  opacity: 0.32;
 }
 
-@keyframes leftStride {
-  0% {
-    transform: translate(160px, 386px) rotate(-9deg) scale(1.18);
-    opacity: 1;
-  }
-  25% {
-    transform: translate(148px, 315px) rotate(-5deg) scale(1.02);
-    opacity: .95;
-  }
-  50% {
-    transform: translate(138px, 245px) rotate(1deg) scale(.84);
-    opacity: .72;
-  }
-  75% {
-    transform: translate(126px, 178px) rotate(5deg) scale(.62);
-    opacity: .18;
-  }
-  100% {
-    transform: translate(160px, 386px) rotate(-9deg) scale(1.18);
-    opacity: 1;
-  }
-}
-
-@keyframes rightStride {
-  0% {
-    transform: translate(294px, 178px) rotate(5deg) scale(.62);
-    opacity: .18;
-  }
-  25% {
-    transform: translate(282px, 245px) rotate(1deg) scale(.84);
-    opacity: .72;
-  }
-  50% {
-    transform: translate(272px, 315px) rotate(-5deg) scale(1.02);
-    opacity: .95;
-  }
-  75% {
-    transform: translate(260px, 386px) rotate(-9deg) scale(1.18);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(294px, 178px) rotate(5deg) scale(.62);
-    opacity: .18;
-  }
-}
-
-@keyframes leftShadow {
-  0% { transform: translate(164px, 478px) scale(1.2); opacity: .38; }
-  50% { transform: translate(142px, 310px) scale(.74); opacity: .15; }
-  100% { transform: translate(164px, 478px) scale(1.2); opacity: .38; }
-}
-
-@keyframes rightShadow {
-  0% { transform: translate(298px, 310px) scale(.74); opacity: .15; }
-  50% { transform: translate(266px, 478px) scale(1.2); opacity: .38; }
-  100% { transform: translate(298px, 310px) scale(.74); opacity: .15; }
+.blue-speck {
+  fill: #00101c;
+  opacity: 0.25;
 }
 </style>
 </head>
 
 <body>
-<main class="stage">
 
-<svg viewBox="0 0 420 620" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" aria-label="Stylised aerial running track">
 
-  <defs>
-    <clipPath id="clip">
-      <rect x="0" y="0" width="420" height="620" rx="0"/>
-    </clipPath>
+  <!-- deep blue world -->
+  <rect class="outer-blue" width="1200" height="900" />
 
-    <radialGradient id="trackLight" cx="50%" cy="38%" r="78%">
-      <stop offset="0%" stop-color="#17233d"/>
-      <stop offset="100%" stop-color="#07101d"/>
-    </radialGradient>
-  </defs>
+  <!-- large blue infield cutaway -->
+  <path
+    class="infield"
+    d="M-120 900
+       C30 670 110 520 210 385
+       C330 225 500 105 720 45
+       L1330 -90
+       L1330 900 Z"
+  />
 
-  <g clip-path="url(#clip)" class="camera">
+  <!-- track mass -->
+  <path
+    class="track-red"
+    d="M-170 850
+       C-20 610 95 430 245 285
+       C430 105 655 15 940 -20
+       L1210 -50
+       L1210 610
+       C955 615 760 655 595 760
+       C520 808 465 858 420 930
+       Z"
+  />
 
-    <!-- track base -->
-    <path class="track" d="M-90 620 L110 0 H310 L510 620 Z" />
-    <path fill="url(#trackLight)" d="M-90 620 L110 0 H310 L510 620 Z" opacity=".85"/>
+  <!-- darker inner sweep -->
+  <path
+    class="track-red-dark"
+    d="M-120 850
+       C35 610 145 455 285 330
+       C470 165 690 90 950 70
+       L1210 52
+       L1210 210
+       C940 230 745 290 585 420
+       C405 565 310 715 235 930
+       Z"
+  />
 
-    <!-- track grain -->
-    <g class="track-grain">
-      <circle cx="80" cy="70" r="1"/>
-      <circle cx="190" cy="110" r="1.2"/>
-      <circle cx="315" cy="80" r="1"/>
-      <circle cx="110" cy="210" r="1.1"/>
-      <circle cx="260" cy="235" r="1"/>
-      <circle cx="340" cy="340" r="1.4"/>
-      <circle cx="72" cy="430" r="1"/>
-      <circle cx="210" cy="485" r="1.2"/>
-      <circle cx="315" cy="525" r="1"/>
-      <circle cx="145" cy="570" r="1"/>
-    </g>
+  <!-- inner blue void -->
+  <path
+    class="outer-blue"
+    d="M-170 900
+       C0 650 115 500 260 390
+       C425 265 620 210 875 200
+       L1210 190
+       L1210 360
+       C925 370 720 435 570 570
+       C450 678 385 795 340 930
+       Z"
+  />
 
-    <!-- moving lane structure -->
-    <g class="track-move">
-      <line class="lane-line" x1="115" y1="-200" x2="-88" y2="620"/>
-      <line class="lane-line" x1="305" y1="-200" x2="508" y2="620"/>
+  <!-- lane curves -->
+  <path class="line" d="M-105 835 C45 610 160 445 315 310 C500 150 705 80 965 55 L1210 38" />
+  <path class="thin-line" d="M-45 850 C100 635 205 480 355 350 C535 195 725 130 980 108 L1210 92" />
+  <path class="thin-line" d="M15 865 C155 660 255 520 395 390 C570 240 750 180 995 162 L1210 148" />
+  <path class="thin-line" d="M75 880 C210 690 310 560 435 430 C600 285 780 230 1010 218 L1210 205" />
+  <path class="thin-line" d="M135 895 C270 720 360 595 475 470 C630 330 805 280 1025 274 L1210 262" />
+  <path class="thin-line" d="M195 910 C325 750 415 630 515 510 C665 375 830 330 1040 330 L1210 320" />
 
-      <line class="cross-line" x1="125" y1="0" x2="295" y2="0"/>
-      <line class="cross-line" x1="125" y1="-260" x2="295" y2="-260" style="animation-delay:-1s"/>
-    </g>
+  <!-- lower straight lane divider hints -->
+  <line class="line" x1="430" y1="812" x2="1185" y2="804" />
+  <line class="thin-line" x1="478" y1="756" x2="1185" y2="750" />
+  <line class="thin-line" x1="528" y1="703" x2="1185" y2="696" />
 
-    <!-- soft centre shadow -->
-    <ellipse cx="210" cy="560" rx="150" ry="44" fill="rgba(0,0,0,.28)" filter="blur(16px)"/>
+  <!-- lane tick marks on curve -->
+  <line class="mark" x1="520" y1="286" x2="540" y2="306" />
+  <line class="mark" x1="602" y1="240" x2="622" y2="260" />
+  <line class="mark" x1="690" y1="205" x2="710" y2="225" />
+  <line class="mark" x1="785" y1="178" x2="805" y2="198" />
 
-    <!-- shadows -->
-    <ellipse class="foot-shadow left-shadow" cx="0" cy="0" rx="42" ry="16"/>
-    <ellipse class="foot-shadow right-shadow" cx="0" cy="0" rx="42" ry="16"/>
-
-    <!-- LEFT FOOT -->
-    <g class="foot left-foot">
-      <ellipse class="sock" cx="0" cy="-42" rx="21" ry="31"/>
-      <path class="shoe" d="M-35 -10 C-38 38 -27 88 0 104 C27 88 38 38 35 -10 C28 -42 -28 -42 -35 -10Z"/>
-      <path class="shoe-side" d="M0 -36 C23 -30 32 -8 30 28 C26 65 14 88 0 104 C11 50 9 5 0 -36Z" opacity=".45"/>
-      <path class="sole" d="M-31 72 C-20 104 20 104 31 72 L27 99 C17 122 -17 122 -27 99Z"/>
-      <line class="lace" x1="-17" y1="8" x2="17" y2="22"/>
-      <line class="lace" x1="-18" y1="30" x2="18" y2="44"/>
-    </g>
-
-    <!-- RIGHT FOOT -->
-    <g class="foot right-foot">
-      <ellipse class="sock" cx="0" cy="-42" rx="21" ry="31"/>
-      <path class="shoe" d="M-35 -10 C-38 38 -27 88 0 104 C27 88 38 38 35 -10 C28 -42 -28 -42 -35 -10Z"/>
-      <path class="shoe-side" d="M0 -36 C23 -30 32 -8 30 28 C26 65 14 88 0 104 C11 50 9 5 0 -36Z" opacity=".45"/>
-      <path class="sole" d="M-31 72 C-20 104 20 104 31 72 L27 99 C17 122 -17 122 -27 99Z"/>
-      <line class="lace" x1="-17" y1="8" x2="17" y2="22"/>
-      <line class="lace" x1="-18" y1="30" x2="18" y2="44"/>
-    </g>
-
+  <!-- lane numbers -->
+  <g transform="rotate(-2 760 795)">
+    <text class="number" x="680" y="820">1</text>
+    <text class="number" x="785" y="817">2</text>
+    <text class="number" x="890" y="814">3</text>
+    <text class="number" x="995" y="811">4</text>
+    <text class="number" x="1100" y="808">5</text>
   </g>
+
+  <!-- finish/start line -->
+  <line class="line" x1="610" y1="675" x2="1210" y2="668" />
+
+  <!-- hurdle shadow -->
+  <path
+    class="shadow"
+    d="M930 170
+       L1115 310
+       L1090 338
+       L905 198 Z"
+  />
+
+  <!-- hurdle -->
+  <g transform="translate(900 105) rotate(34)">
+    <rect class="hurdle-white" x="0" y="0" width="150" height="16" rx="2" />
+    <rect class="hurdle-dark" x="12" y="16" width="10" height="70" rx="2" />
+    <rect class="hurdle-dark" x="128" y="16" width="10" height="70" rx="2" />
+    <rect class="hurdle-dark" x="5" y="84" width="52" height="8" rx="2" />
+    <rect class="hurdle-dark" x="94" y="84" width="52" height="8" rx="2" />
+  </g>
+
+  <!-- future runner placeholder zone shadow, static for composition -->
+  <path
+    class="shadow"
+    d="M405 455
+       C440 488 480 515 535 538
+       C570 553 600 570 628 600
+       C590 618 545 604 495 575
+       C445 546 410 515 382 470 Z"
+  />
+
+  <!-- tiny runner marker placeholder -->
+  <g transform="translate(390 430) rotate(34)">
+    <ellipse cx="0" cy="-14" rx="10" ry="12" fill="#06121f" />
+    <rect x="-8" y="-2" width="16" height="34" rx="8" fill="#ffb13b" />
+    <path d="M-8 12 L-22 36" stroke="#06121f" stroke-width="7" stroke-linecap="round" />
+    <path d="M8 13 L22 33" stroke="#06121f" stroke-width="7" stroke-linecap="round" />
+    <path d="M-7 3 L-24 14" stroke="#06121f" stroke-width="6" stroke-linecap="round" />
+    <path d="M8 5 L24 -2" stroke="#06121f" stroke-width="6" stroke-linecap="round" />
+  </g>
+
+  <!-- texture speckles -->
+  <g class="texture">
+    <circle class="speck" cx="100" cy="720" r="1.4" />
+    <circle class="speck" cx="180" cy="650" r="1" />
+    <circle class="speck" cx="270" cy="560" r="1.2" />
+    <circle class="speck" cx="390" cy="405" r="1" />
+    <circle class="speck" cx="520" cy="325" r="1.3" />
+    <circle class="speck" cx="710" cy="250" r="1" />
+    <circle class="speck" cx="900" cy="190" r="1.2" />
+    <circle class="speck" cx="1050" cy="420" r="1.1" />
+    <circle class="speck" cx="890" cy="590" r="1" />
+    <circle class="speck" cx="730" cy="705" r="1.4" />
+    <circle class="speck" cx="580" cy="820" r="1" />
+
+    <circle class="blue-speck" cx="1000" cy="120" r="1.4" />
+    <circle class="blue-speck" cx="1080" cy="240" r="1.2" />
+    <circle class="blue-speck" cx="100" cy="850" r="1.3" />
+    <circle class="blue-speck" cx="280" cy="820" r="1" />
+  </g>
+
 </svg>
 
-</main>
 </body>
 </html>
