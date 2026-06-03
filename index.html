@@ -30,6 +30,8 @@ svg {
   height: 100vh;
   display: block;
   background: #071625;
+  transform: scale(1.45) translateY(-40px);
+  transform-origin: center;
 }
 
 .track-red {
@@ -209,11 +211,6 @@ svg {
     transform: scale(0.82);
     opacity: 0.46;
   }
-}
-
-svg {
-  transform: scale(1.04);
-  transform-origin: center;
 }
 
 .runner-on-path {
@@ -452,16 +449,6 @@ svg {
       />
 
     </g>
-
-    <animateMotion
-      dur="9s"
-      repeatCount="indefinite"
-      rotate="auto"
-    >
-      <mpath href="#laneOnePath" />
-    </animateMotion>
-
-  </g>
 
     <animateMotion
       dur="9s"
