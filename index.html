@@ -1,787 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>BETTER OS — Living Athlete Interface</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raisin</title>
 <style>
 :root{
-  --bg-0:#03070d;
-  --bg-1:#07131f;
-  --bg-2:#0e2234;
-  --navy:#102a43;
-  --navy-2:#163853;
-  --steel:#8ea4b5;
-  --steel-2:#c9d5dd;
-  --warm:#f7f0e8;
-  --warm-2:#fff7ef;
-  --coral:#ff735f;
-  --coral-2:#ffb19c;
-  --mint:#9ee6c9;
-  --amber:#ffd28a;
-  --danger:#ff5d6c;
-  --glass:rgba(255,255,255,.08);
-  --glass-2:rgba(255,255,255,.14);
-  --line:rgba(255,255,255,.18);
+  --bg:#f6efe7;
+  --card:#fffaf5;
+  --outline:#2f2a28;
+  --fur:#c58f57;
+  --fur-dark:#9a6b3f;
+  --nose:#2f2a28;
+  --eye:#1f1f1f;
+  --tongue:#ff8a8a;
 }
-
 *{
+  box-sizing:border-box;
   margin:0;
   padding:0;
-  box-sizing:border-box;
 }
-
-html,
-body{
-  width:100%;
-  min-height:100%;
-  background:var(--bg-0);
-  color:var(--warm);
-  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-  overflow:hidden;
-}
-
 body{
   min-height:100vh;
+  background:var(--bg);
   display:flex;
   align-items:center;
   justify-content:center;
-  background:
-    radial-gradient(circle at 50% 18%, rgba(255,115,95,.18), transparent 28%),
-    radial-gradient(circle at 18% 20%, rgba(158,230,201,.10), transparent 28%),
-    radial-gradient(circle at 80% 70%, rgba(255,177,156,.10), transparent 32%),
-    linear-gradient(145deg,#040912 0%,#081726 44%,#02050a 100%);
+  font-family:system-ui,sans-serif;
 }
-
-.app-shell{
-  width:min(1440px,100vw);
-  height:min(920px,100vh);
+.stage{
+  width:min(700px,95vw);
+  aspect-ratio:1/1;
+  background:var(--card);
+  border-radius:32px;
+  overflow:hidden;
   position:relative;
-  padding:18px;
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.08);
 }
-
-.scene{
+svg{
   width:100%;
   height:100%;
   display:block;
-  border-radius:34px;
-  filter:drop-shadow(0 40px 90px rgba(0,0,0,.55));
 }
-
-.mode-dock{
+.label{
   position:absolute;
-  z-index:20;
-  left:50%;
-  bottom:28px;
-  transform:translateX(-50%);
-  display:flex;
-  gap:8px;
-  padding:8px;
-  border:1px solid rgba(255,255,255,.14);
-  border-radius:999px;
-  background:rgba(3,7,13,.62);
-  backdrop-filter:blur(18px);
-  box-shadow:0 18px 50px rgba(0,0,0,.35);
-}
-
-.mode-btn{
-  appearance:none;
-  border:0;
-  color:rgba(247,240,232,.72);
-  background:transparent;
-  border-radius:999px;
-  padding:11px 15px;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.12em;
-  cursor:pointer;
-  transition:.25s ease;
-}
-
-.mode-btn:hover{
-  color:white;
-  background:rgba(255,255,255,.08);
-}
-
-.mode-btn.active{
-  color:#07131f;
-  background:linear-gradient(135deg,var(--coral),var(--coral-2));
-  box-shadow:0 0 28px rgba(255,115,95,.35);
-}
-
-.hint{
-  position:absolute;
-  top:28px;
-  right:32px;
-  z-index:20;
-  color:rgba(247,240,232,.48);
-  font-size:12px;
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  pointer-events:none;
-}
-
-@media(max-width:760px){
-  .app-shell{
-    height:100vh;
-    padding:8px;
-  }
-
-  .mode-dock{
-    width:calc(100vw - 24px);
-    overflow:auto;
-    justify-content:flex-start;
-    bottom:16px;
-  }
-
-  .mode-btn{
-    white-space:nowrap;
-    padding:10px 13px;
-    font-size:11px;
-  }
-
-  .hint{
-    display:none;
-  }
+  top:20px;
+  left:20px;
+  font-weight:700;
+  color:#5d524c;
 }
 </style>
 </head>
-
 <body>
-
-<div class="app-shell">
-  <div class="hint">Move pointer / tap modes</div>
-
-  <svg class="scene" id="betterScene" viewBox="0 0 1440 920" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated athlete operating system interface">
-
-    <defs>
-      <radialGradient id="spaceGlow" cx="50%" cy="30%" r="72%">
-        <stop offset="0%" stop-color="#2d4e68"/>
-        <stop offset="42%" stop-color="#102a43"/>
-        <stop offset="100%" stop-color="#03070d"/>
-      </radialGradient>
-
-      <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#ffb19c" stop-opacity="1"/>
-        <stop offset="42%" stop-color="#ff735f" stop-opacity=".45"/>
-        <stop offset="100%" stop-color="#ff735f" stop-opacity="0"/>
-      </radialGradient>
-
-      <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#ffffff" stop-opacity=".22"/>
-        <stop offset="45%" stop-color="#ffffff" stop-opacity=".08"/>
-        <stop offset="100%" stop-color="#ffffff" stop-opacity=".035"/>
-      </linearGradient>
-
-      <linearGradient id="coralGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#ff735f"/>
-        <stop offset="48%" stop-color="#ffb19c"/>
-        <stop offset="100%" stop-color="#fff7ef"/>
-      </linearGradient>
-
-      <linearGradient id="mintGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#9ee6c9"/>
-        <stop offset="100%" stop-color="#eafff7"/>
-      </linearGradient>
-
-      <linearGradient id="amberGrad" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="#ffd28a"/>
-        <stop offset="100%" stop-color="#fff2d6"/>
-      </linearGradient>
-
-      <linearGradient id="scanGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#ff735f" stop-opacity="0"/>
-        <stop offset="50%" stop-color="#ff735f" stop-opacity=".7"/>
-        <stop offset="100%" stop-color="#ff735f" stop-opacity="0"/>
-      </linearGradient>
-
-      <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
-        <feDropShadow dx="0" dy="24" stdDeviation="24" flood-color="#000000" flood-opacity=".34"/>
-      </filter>
-
-      <filter id="glow">
-        <feGaussianBlur stdDeviation="5" result="blur"/>
-        <feMerge>
-          <feMergeNode in="blur"/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-
-      <filter id="heavyGlow">
-        <feGaussianBlur stdDeviation="18" result="blur"/>
-        <feColorMatrix in="blur" type="matrix"
-          values="1 0 0 0 1
-                  0 .45 0 0 .22
-                  0 0 .25 0 .18
-                  0 0 0 .95 0"/>
-        <feMerge>
-          <feMergeNode/>
-          <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-      </filter>
-
-      <filter id="turbulence">
-        <feTurbulence type="fractalNoise" baseFrequency=".009 .018" numOctaves="2" seed="9" result="noise"/>
-        <feColorMatrix type="saturate" values="0"/>
-        <feComponentTransfer>
-          <feFuncA type="table" tableValues="0 .12"/>
-        </feComponentTransfer>
-      </filter>
-
-      <pattern id="microGrid" width="34" height="34" patternUnits="userSpaceOnUse">
-        <path d="M34 0H0V34" fill="none" stroke="#ffffff" stroke-opacity=".06" stroke-width="1"/>
-        <circle cx="0" cy="0" r="1.2" fill="#ffffff" opacity=".16"/>
-      </pattern>
-
-      <pattern id="dotGrid" width="18" height="18" patternUnits="userSpaceOnUse">
-        <circle cx="1" cy="1" r="1" fill="#ffffff" opacity=".12"/>
-      </pattern>
-
-      <clipPath id="screenClip">
-        <rect x="56" y="48" width="1328" height="800" rx="42"/>
-      </clipPath>
-
-      <clipPath id="bodyClip">
-        <path d="M706 260
-        C688 267 679 284 681 305
-        C684 327 694 341 697 359
-        C701 381 688 404 671 425
-        C651 449 636 480 633 520
-        C629 574 666 620 719 624
-        C772 628 813 592 813 537
-        C814 493 794 455 771 427
-        C751 403 742 383 746 359
-        C750 336 762 321 760 298
-        C758 276 744 262 726 258
-        C720 257 712 258 706 260Z"/>
-      </clipPath>
-
-      <path id="orbitWide" d="M324 460 C422 220 1014 220 1116 460 C1014 700 422 700 324 460Z"/>
-      <path id="orbitTilt" d="M402 332 C595 158 900 218 1038 460 C866 762 554 678 402 332Z"/>
-      <path id="signalPathA" d="M190 342 C340 380 505 422 720 460 C910 493 1042 548 1225 602"/>
-      <path id="signalPathB" d="M1232 290 C1054 350 912 400 720 460 C530 520 388 572 198 650"/>
-      <path id="signalPathC" d="M280 744 C420 650 582 555 720 460 C868 358 1018 260 1170 176"/>
-    </defs>
-
-    <rect width="1440" height="920" fill="url(#spaceGlow)"/>
-    <rect width="1440" height="920" fill="url(#microGrid)" opacity=".9"/>
-    <rect width="1440" height="920" filter="url(#turbulence)" opacity=".75"/>
-
-    <g id="parallaxBackdrop">
-      <circle cx="720" cy="460" r="410" fill="none" stroke="#ffffff" stroke-opacity=".055"/>
-      <circle cx="720" cy="460" r="322" fill="none" stroke="#ffffff" stroke-opacity=".07"/>
-      <circle cx="720" cy="460" r="236" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
-      <circle cx="720" cy="460" r="154" fill="none" stroke="#ffffff" stroke-opacity=".08"/>
-    </g>
-
-    <g id="starField" filter="url(#glow)"></g>
-
-    <rect x="34" y="28" width="1372" height="850" rx="58" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".22" filter="url(#softShadow)"/>
-    <rect x="56" y="48" width="1328" height="800" rx="42" fill="#07131f" opacity=".84"/>
-    <rect x="56" y="48" width="1328" height="800" rx="42" fill="url(#dotGrid)" opacity=".5"/>
-
-    <g clip-path="url(#screenClip)">
-
-      <g id="scanLayer">
-        <rect id="scanBeam" x="82" y="-160" width="1276" height="130" fill="url(#scanGrad)" opacity=".35"/>
-      </g>
-
-      <g id="signalLines" fill="none" stroke-linecap="round">
-        <use href="#signalPathA" stroke="#ff735f" stroke-opacity=".22" stroke-width="2"/>
-        <use href="#signalPathB" stroke="#ffffff" stroke-opacity=".14" stroke-width="2"/>
-        <use href="#signalPathC" stroke="#9ee6c9" stroke-opacity=".16" stroke-width="2"/>
-        <use href="#signalPathA" class="dashLine" stroke="#ff735f" stroke-opacity=".65" stroke-width="3" stroke-dasharray="12 26"/>
-        <use href="#signalPathB" class="dashLine slowDash" stroke="#ffffff" stroke-opacity=".34" stroke-width="2" stroke-dasharray="8 24"/>
-        <use href="#signalPathC" class="dashLine reverseDash" stroke="#9ee6c9" stroke-opacity=".4" stroke-width="2" stroke-dasharray="10 28"/>
-      </g>
-
-      <g id="header" font-family="Inter, Arial, sans-serif">
-        <text x="98" y="108" fill="#f7f0e8" font-size="14" letter-spacing="6" opacity=".56">BETTER OS</text>
-        <text x="98" y="160" fill="#ffffff" font-size="54" font-weight="900" letter-spacing="-2">Living Athlete Interface</text>
-        <text x="101" y="194" fill="#c9d5dd" font-size="16" opacity=".7">stress · recovery · adaptation · output · confidence</text>
-
-        <g transform="translate(1120 92)">
-          <text x="0" y="0" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".58">MODEL CONFIDENCE</text>
-          <text id="confidenceText" x="0" y="48" fill="#ffb19c" font-size="42" font-weight="900">98.4%</text>
-          <rect x="0" y="65" width="190" height="8" rx="4" fill="#ffffff" opacity=".11"/>
-          <rect id="confidenceBar" x="0" y="65" width="178" height="8" rx="4" fill="url(#coralGrad)"/>
-        </g>
-      </g>
-
-      <g id="leftPanels" font-family="Inter, Arial, sans-serif">
-        <g class="metricPanel" transform="translate(96 258)">
-          <rect width="282" height="144" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">LOAD TOLERANCE</text>
-          <text id="loadLabel" x="24" y="87" fill="#ffffff" font-size="42" font-weight="900">HIGH</text>
-          <path id="loadSpark" d="M26 112 C58 88 80 128 112 103 C144 76 162 122 196 91 C222 68 242 78 262 58" fill="none" stroke="#ff735f" stroke-width="5" stroke-linecap="round"/>
-        </g>
-
-        <g class="metricPanel" transform="translate(96 432)">
-          <rect width="282" height="144" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">ADAPTATION RATE</text>
-          <text id="adaptText" x="24" y="88" fill="#ffffff" font-size="42" font-weight="900">+12.8%</text>
-          <g id="adaptBars" transform="translate(28 108)"></g>
-        </g>
-
-        <g class="metricPanel" transform="translate(96 606)">
-          <rect width="282" height="116" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">NEXT BEST ACTION</text>
-          <text id="actionText" x="24" y="78" fill="#ffb19c" font-size="23" font-weight="900">EXPRESS STRENGTH</text>
-        </g>
-      </g>
-
-      <g id="rightPanels" font-family="Inter, Arial, sans-serif">
-        <g class="metricPanel" transform="translate(1062 258)">
-          <rect width="276" height="144" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">RECOVERY DEBT</text>
-          <text id="recoveryLabel" x="24" y="87" fill="#ffffff" font-size="42" font-weight="900">LOW</text>
-          <rect x="26" y="108" width="220" height="9" rx="5" fill="#ffffff" opacity=".12"/>
-          <rect id="recoveryBar" x="26" y="108" width="64" height="9" rx="5" fill="url(#coralGrad)"/>
-        </g>
-
-        <g class="metricPanel" transform="translate(1062 432)">
-          <rect width="276" height="144" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">OUTPUT WINDOW</text>
-          <text id="outputLabel" x="24" y="87" fill="#ffffff" font-size="42" font-weight="900">PRIME</text>
-          <path id="outputSpark" d="M28 112 L62 78 L92 98 L125 58 L157 83 L190 48 L238 72" fill="none" stroke="#9ee6c9" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-        </g>
-
-        <g class="metricPanel" transform="translate(1062 606)">
-          <rect width="276" height="116" rx="28" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".16"/>
-          <text x="24" y="38" fill="#c9d5dd" font-size="12" letter-spacing="3" opacity=".72">SYSTEM STATE</text>
-          <text id="stateText" x="24" y="78" fill="#ffb19c" font-size="24" font-weight="900">READY TO PUSH</text>
-        </g>
-      </g>
-
-      <g id="centralSystem">
-        <g id="orbitSystem" fill="none" stroke-linecap="round">
-          <use href="#orbitWide" stroke="#ffffff" stroke-opacity=".13" stroke-width="2"/>
-          <use href="#orbitTilt" stroke="#ff735f" stroke-opacity=".24" stroke-width="2"/>
-          <ellipse cx="720" cy="460" rx="372" ry="104" stroke="#ffffff" stroke-opacity=".12" stroke-width="2"/>
-          <ellipse cx="720" cy="460" rx="104" ry="372" stroke="#9ee6c9" stroke-opacity=".12" stroke-width="2" transform="rotate(38 720 460)"/>
-
-          <g id="rotorA">
-            <ellipse cx="720" cy="460" rx="338" ry="92" stroke="#ff735f" stroke-opacity=".5" stroke-width="3" stroke-dasharray="28 42"/>
-            <circle cx="1058" cy="460" r="7" fill="#ff735f" stroke="#fff" stroke-opacity=".6"/>
-            <circle cx="382" cy="460" r="4" fill="#ffb19c"/>
-          </g>
-
-          <g id="rotorB">
-            <ellipse cx="720" cy="460" rx="92" ry="338" stroke="#ffffff" stroke-opacity=".28" stroke-width="2" stroke-dasharray="14 34" transform="rotate(42 720 460)"/>
-            <circle cx="720" cy="122" r="5" fill="#ffffff"/>
-            <circle cx="720" cy="798" r="7" fill="#9ee6c9"/>
-          </g>
-
-          <g id="rotorC">
-            <ellipse cx="720" cy="460" rx="250" ry="70" stroke="#9ee6c9" stroke-opacity=".28" stroke-width="2" stroke-dasharray="8 24" transform="rotate(-24 720 460)"/>
-          </g>
-        </g>
-
-        <g id="coreHalo" filter="url(#heavyGlow)">
-          <circle cx="720" cy="460" r="184" fill="url(#coreGlow)" opacity=".62"/>
-          <circle cx="720" cy="460" r="152" fill="#02070d" stroke="#ffffff" stroke-opacity=".16" stroke-width="2"/>
-          <circle id="readinessRingBg" cx="720" cy="460" r="126" fill="none" stroke="#ffffff" stroke-opacity=".12" stroke-width="18"/>
-          <circle id="readinessRing" cx="720" cy="460" r="126" fill="none" stroke="url(#coralGrad)" stroke-width="18" stroke-linecap="round" stroke-dasharray="684 792" transform="rotate(-90 720 460)"/>
-          <circle cx="720" cy="460" r="92" fill="#07131f" stroke="#ffffff" stroke-opacity=".18" stroke-width="2"/>
-        </g>
-
-        <g id="bodySystem" clip-path="url(#bodyClip)">
-          <rect x="620" y="248" width="210" height="390" fill="#ffffff" opacity=".05"/>
-          <path d="M706 260
-          C688 267 679 284 681 305
-          C684 327 694 341 697 359
-          C701 381 688 404 671 425
-          C651 449 636 480 633 520
-          C629 574 666 620 719 624
-          C772 628 813 592 813 537
-          C814 493 794 455 771 427
-          C751 403 742 383 746 359
-          C750 336 762 321 760 298
-          C758 276 744 262 726 258
-          C720 257 712 258 706 260Z"
-          fill="#ffffff" opacity=".1"/>
-          <path id="bodySignalA" d="M720 270 C696 325 744 360 720 418 C692 485 744 538 720 616" fill="none" stroke="#ff735f" stroke-width="5" stroke-linecap="round" opacity=".86"/>
-          <path id="bodySignalB" d="M690 330 C720 350 750 372 720 408 C688 449 686 494 720 536 C746 568 742 590 730 616" fill="none" stroke="#9ee6c9" stroke-width="3" stroke-linecap="round" opacity=".48"/>
-          <rect id="bodyScan" x="620" y="230" width="220" height="80" fill="url(#scanGrad)" opacity=".55"/>
-        </g>
-
-        <path d="M706 260
-        C688 267 679 284 681 305
-        C684 327 694 341 697 359
-        C701 381 688 404 671 425
-        C651 449 636 480 633 520
-        C629 574 666 620 719 624
-        C772 628 813 592 813 537
-        C814 493 794 455 771 427
-        C751 403 742 383 746 359
-        C750 336 762 321 760 298
-        C758 276 744 262 726 258
-        C720 257 712 258 706 260Z"
-        fill="none" stroke="#ffffff" stroke-opacity=".28" stroke-width="2"/>
-
-        <g font-family="Inter, Arial, sans-serif" text-anchor="middle">
-          <text x="720" y="684" fill="#c9d5dd" font-size="13" letter-spacing="3" opacity=".72">READINESS SCORE</text>
-          <text id="scoreText" x="720" y="744" fill="#ffffff" font-size="74" font-weight="950" letter-spacing="-3">87</text>
-          <text x="790" y="728" fill="#c9d5dd" font-size="22" opacity=".65">/100</text>
-        </g>
-      </g>
-
-      <g id="bottomTimeline" transform="translate(438 760)" font-family="Inter, Arial, sans-serif">
-        <rect x="0" y="0" width="564" height="68" rx="24" fill="url(#glassGrad)" stroke="#ffffff" stroke-opacity=".14"/>
-        <text x="24" y="27" fill="#c9d5dd" font-size="11" letter-spacing="3" opacity=".72">SEVEN DAY SIGNAL</text>
-        <g id="timelineBars" transform="translate(26 40)"></g>
-      </g>
-
-      <g id="nodeLayer"></g>
-      <g id="particleLayer" filter="url(#glow)"></g>
-
-    </g>
-  </svg>
-
-  <div class="mode-dock" id="modeDock">
-    <button class="mode-btn active" data-mode="readiness">Readiness</button>
-    <button class="mode-btn" data-mode="strength">Strength</button>
-    <button class="mode-btn" data-mode="recovery">Recovery</button>
-    <button class="mode-btn" data-mode="adaptation">Adaptation</button>
-  </div>
+<div class="stage">
+<div class="label">
+Raisin • Awake
 </div>
-
+<svg viewBox="0 0 800 800">
+  <!-- shadow -->
+  <!-- tail -->
+  <g id="tailGroup">
+<path
+  id="tail"
+  d="M560 500
+     C650 430,
+     680 380,
+     660 330"
+  fill="none"
+  stroke="#9a6b3f"
+  stroke-width="34"
+  stroke-linecap="round"/>
+  </g>
+  <!-- body -->
+  <!-- chest -->
+  <!-- head -->
+  <g id="headGroup">
+<circle
+  cx="400"
+  cy="320"
+  r="115"
+  fill="#c58f57"/>
+<!-- ears -->
+<ellipse
+  id="leftEar"
+  cx="320"
+  cy="320"
+  rx="38"
+  ry="95"
+  fill="#9a6b3f"/>
+<ellipse
+  id="rightEar"
+  cx="480"
+  cy="320"
+  rx="38"
+  ry="95"
+  fill="#9a6b3f"/>
+<!-- eyes -->
+<ellipse
+  id="leftEye"
+  cx="360"
+  cy="305"
+  rx="10"
+  ry="16"
+  fill="#1f1f1f"/>
+<ellipse
+  id="rightEye"
+  cx="440"
+  cy="305"
+  rx="10"
+  ry="16"
+  fill="#1f1f1f"/>
+<!-- muzzle -->
+<ellipse
+  cx="400"
+  cy="355"
+  rx="55"
+  ry="42"
+  fill="#e8d4bf"/>
+<!-- nose -->
+<ellipse
+  id="nose"
+  cx="400"
+  cy="345"
+  rx="18"
+  ry="12"
+  fill="#2f2a28"/>
+<!-- mouth -->
+<path
+  id="mouth"
+  d="M385 370
+     Q400 382
+     415 370"
+  fill="none"
+  stroke="#2f2a28"
+  stroke-width="4"
+  stroke-linecap="round"/>
+  </g>
+</svg>
+</div>
 <script>
-const svg = document.getElementById("betterScene");
-const NS = "http://www.w3.org/2000/svg";
-
-const state = {
-  mode: "readiness",
-  pointerX: 0.5,
-  pointerY: 0.5,
-  t: 0,
-  metrics: {
-    readiness: 87,
-    confidence: 98.4,
-    recoveryDebt: 29,
-    adaptation: 12.8
-  }
-};
-
-const modes = {
-  readiness: {
-    score: 87,
-    confidence: 98.4,
-    recoveryDebt: 29,
-    adaptation: 12.8,
-    load: "HIGH",
-    recovery: "LOW",
-    output: "PRIME",
-    action: "EXPRESS STRENGTH",
-    system: "READY TO PUSH",
-    accent: "#ff735f",
-    secondary: "#ffb19c"
-  },
-  strength: {
-    score: 91,
-    confidence: 96.7,
-    recoveryDebt: 34,
-    adaptation: 9.4,
-    load: "MAXIMAL",
-    recovery: "MED",
-    output: "POWER",
-    action: "HEAVY CLUSTER",
-    system: "HIGH OUTPUT",
-    accent: "#ffd28a",
-    secondary: "#fff2d6"
-  },
-  recovery: {
-    score: 73,
-    confidence: 94.1,
-    recoveryDebt: 61,
-    adaptation: 6.2,
-    load: "CAUTION",
-    recovery: "HIGH",
-    output: "PROTECT",
-    action: "RESTORE RANGE",
-    system: "DELOAD SIGNAL",
-    accent: "#9ee6c9",
-    secondary: "#eafff7"
-  },
-  adaptation: {
-    score: 82,
-    confidence: 97.2,
-    recoveryDebt: 42,
-    adaptation: 18.6,
-    load: "BUILDING",
-    recovery: "MOD",
-    output: "GROWTH",
-    action: "VOLUME WAVE",
-    system: "ADAPTIVE WINDOW",
-    accent: "#ff735f",
-    secondary: "#9ee6c9"
-  }
-};
-
-const els = {
-  scoreText: document.getElementById("scoreText"),
-  confidenceText: document.getElementById("confidenceText"),
-  confidenceBar: document.getElementById("confidenceBar"),
-  readinessRing: document.getElementById("readinessRing"),
-  recoveryBar: document.getElementById("recoveryBar"),
-  loadLabel: document.getElementById("loadLabel"),
-  recoveryLabel: document.getElementById("recoveryLabel"),
-  outputLabel: document.getElementById("outputLabel"),
-  actionText: document.getElementById("actionText"),
-  stateText: document.getElementById("stateText"),
-  adaptText: document.getElementById("adaptText"),
-  scanBeam: document.getElementById("scanBeam"),
-  bodyScan: document.getElementById("bodyScan"),
-  bodySignalA: document.getElementById("bodySignalA"),
-  bodySignalB: document.getElementById("bodySignalB"),
-  rotorA: document.getElementById("rotorA"),
-  rotorB: document.getElementById("rotorB"),
-  rotorC: document.getElementById("rotorC"),
-  parallaxBackdrop: document.getElementById("parallaxBackdrop"),
-  nodeLayer: document.getElementById("nodeLayer"),
-  particleLayer: document.getElementById("particleLayer"),
-  starField: document.getElementById("starField"),
-  adaptBars: document.getElementById("adaptBars"),
-  timelineBars: document.getElementById("timelineBars")
-};
-
-function make(tag, attrs = {}, parent){
-  const node = document.createElementNS(NS, tag);
-  Object.entries(attrs).forEach(([key,value]) => node.setAttribute(key,value));
-  if(parent) parent.appendChild(node);
-  return node;
+const head =
+document.getElementById("headGroup");
+const body =
+document.getElementById("body");
+const tail =
+document.getElementById("tailGroup");
+const leftEye =
+document.getElementById("leftEye");
+const rightEye =
+document.getElementById("rightEye");
+let t = 0;
+function animate(){
+  t += 0.03;
+  // breathing
+  const breathe =
+    Math.sin(t) * 4;
+  body.setAttribute(
+    "cy",
+    500 + breathe
+  );
+  head.setAttribute(
+    "transform",
+    `translate(0 ${breathe * .6})`
+  );
+  // tail wag
+  const wag =
+    Math.sin(t * 2.5) * 10;
+  tail.setAttribute(
+    "transform",
+    `rotate(${wag} 560 500)`
+  );
+  requestAnimationFrame(
+    animate
+  );
 }
-
-function lerp(a,b,t){
-  return a + (b - a) * t;
-}
-
-function clamp(v,min,max){
-  return Math.max(min, Math.min(max, v));
-}
-
-function polar(cx,cy,r,angle){
-  return {
-    x: cx + Math.cos(angle) * r,
-    y: cy + Math.sin(angle) * r
-  };
-}
-
-function buildStars(){
-  for(let i = 0; i < 140; i++){
-    const x = Math.random() * 1440;
-    const y = Math.random() * 920;
-    const r = Math.random() * 1.8 + 0.4;
-    const o = Math.random() * 0.4 + 0.08;
-    const c = make("circle", {
-      cx:x,
-      cy:y,
-      r:r,
-      fill:"#ffffff",
-      opacity:o
-    }, els.starField);
-    c.dataset.phase = Math.random() * Math.PI * 2;
-    c.dataset.base = o;
-  }
-}
-
-function buildBars(){
-  for(let i = 0; i < 11; i++){
-    make("rect", {
-      x:i * 22,
-      y:Math.random() * 16,
-      width:12,
-      height:10 + Math.random() * 28,
-      rx:6,
-      fill:i % 3 === 0 ? "#ff735f" : "#ffffff",
-      opacity:i % 3 === 0 ? ".9" : ".34"
-    }, els.adaptBars);
-  }
-
-  for(let i = 0; i < 28; i++){
-    const h = 8 + Math.random() * 28;
-    make("rect", {
-      x:i * 18,
-      y:22 - h / 2,
-      width:9,
-      height:h,
-      rx:5,
-      fill:i > 19 ? "#ff735f" : "#ffffff",
-      opacity:i > 19 ? ".9" : ".24"
-    }, els.timelineBars);
-  }
-}
-
-const nodes = [];
-function buildSignalNodes(){
-  const nodeData = [
-    [458,256,"SRA"],[982,330,"HRV"],[436,640,"LOAD"],[1002,626,"CNS"],
-    [720,214,"VO₂"],[720,708,"POWER"],[548,378,"TENDON"],[892,494,"SKILL"],
-    [586,574,"ROM"],[846,296,"SLEEP"]
-  ];
-
-  nodeData.forEach((d,i) => {
-    const g = make("g", { transform:`translate(${d[0]} ${d[1]})`, opacity:".92" }, els.nodeLayer);
-    make("circle", { r:28, fill:"url(#glassGrad)", stroke:"#ffffff", "stroke-opacity":".18" }, g);
-    make("circle", { r:4, fill:i % 2 ? "#9ee6c9" : "#ff735f" }, g);
-    const text = make("text", {
-      x:0,
-      y:48,
-      "text-anchor":"middle",
-      fill:"#c9d5dd",
-      "font-family":"Inter, Arial",
-      "font-size":10,
-      "font-weight":800,
-      "letter-spacing":2,
-      opacity:.75
-    }, g);
-    text.textContent = d[2];
-    nodes.push({ g, x:d[0], y:d[1], phase:Math.random() * Math.PI * 2, amp:4 + Math.random() * 8 });
-  });
-}
-
-const particles = [];
-function buildParticles(){
-  const paths = ["signalPathA","signalPathB","signalPathC"];
-
-  for(let i = 0; i < 34; i++){
-    const pathId = paths[i % paths.length];
-    const c = make("circle", {
-      r:i % 3 === 0 ? 4 : 2.5,
-      fill:i % 3 === 0 ? "#ff735f" : i % 3 === 1 ? "#ffffff" : "#9ee6c9",
-      opacity:".8"
-    }, els.particleLayer);
-
-    particles.push({
-      el:c,
-      path:document.getElementById(pathId),
-      speed:0.0007 + Math.random() * 0.0016,
-      progress:Math.random(),
-      offset:Math.random() * 1000
-    });
-  }
-}
-
-function setMode(mode){
-  state.mode = mode;
-  const m = modes[mode];
-
-  document.querySelectorAll(".mode-btn").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.mode === mode);
-  });
-
-  els.loadLabel.textContent = m.load;
-  els.recoveryLabel.textContent = m.recovery;
-  els.outputLabel.textContent = m.output;
-  els.actionText.textContent = m.action;
-  els.stateText.textContent = m.system;
-
-  els.bodySignalA.setAttribute("stroke", m.accent);
-  els.bodySignalB.setAttribute("stroke", m.secondary);
-  els.recoveryBar.setAttribute("fill", m.accent);
-  els.outputLabel.setAttribute("fill", "#ffffff");
-}
-
-document.getElementById("modeDock").addEventListener("click", e => {
-  const btn = e.target.closest(".mode-btn");
-  if(!btn) return;
-  setMode(btn.dataset.mode);
-});
-
-window.addEventListener("pointermove", e => {
-  state.pointerX = e.clientX / window.innerWidth;
-  state.pointerY = e.clientY / window.innerHeight;
-});
-
-function updateMetrics(){
-  const m = modes[state.mode];
-  const pulse = Math.sin(state.t * 0.0017);
-  const micro = Math.sin(state.t * 0.0043) * 0.8;
-
-  state.metrics.readiness = lerp(state.metrics.readiness, m.score + pulse * 1.4, 0.035);
-  state.metrics.confidence = lerp(state.metrics.confidence, m.confidence + micro * 0.12, 0.035);
-  state.metrics.recoveryDebt = lerp(state.metrics.recoveryDebt, m.recoveryDebt + pulse * 2.5, 0.035);
-  state.metrics.adaptation = lerp(state.metrics.adaptation, m.adaptation + micro * 0.25, 0.035);
-
-  els.scoreText.textContent = Math.round(state.metrics.readiness);
-  els.confidenceText.textContent = state.metrics.confidence.toFixed(1) + "%";
-  els.adaptText.textContent = "+" + state.metrics.adaptation.toFixed(1) + "%";
-
-  const ring = 792;
-  const scoreRatio = clamp(state.metrics.readiness / 100, 0, 1);
-  els.readinessRing.setAttribute("stroke-dasharray", `${ring * scoreRatio} ${ring}`);
-
-  els.confidenceBar.setAttribute("width", 190 * clamp(state.metrics.confidence / 100, 0, 1));
-  els.recoveryBar.setAttribute("width", 220 * clamp(state.metrics.recoveryDebt / 100, 0, 1));
-}
-
-function animateScene(time){
-  state.t = time;
-
-  const px = (state.pointerX - 0.5);
-  const py = (state.pointerY - 0.5);
-
-  els.rotorA.setAttribute("transform", `rotate(${time * 0.012} 720 460)`);
-  els.rotorB.setAttribute("transform", `rotate(${-time * 0.009} 720 460)`);
-  els.rotorC.setAttribute("transform", `rotate(${time * 0.017} 720 460)`);
-
-  els.parallaxBackdrop.setAttribute("transform", `translate(${px * 18} ${py * 12})`);
-
-  const scanY = -160 + ((time * 0.13) % 1040);
-  els.scanBeam.setAttribute("y", scanY);
-  els.bodyScan.setAttribute("y", 230 + ((time * 0.07) % 430));
-
-  document.querySelectorAll(".dashLine").forEach((line,i) => {
-    const direction = line.classList.contains("reverseDash") ? 1 : -1;
-    const speed = line.classList.contains("slowDash") ? 0.045 : 0.075;
-    line.setAttribute("stroke-dashoffset", direction * time * speed + i * 40);
-  });
-
-  nodes.forEach(n => {
-    const y = n.y + Math.sin(time * 0.0015 + n.phase) * n.amp;
-    const x = n.x + Math.cos(time * 0.0012 + n.phase) * n.amp * 0.55;
-    n.g.setAttribute("transform", `translate(${x} ${y})`);
-  });
-
-  particles.forEach(p => {
-    const len = p.path.getTotalLength();
-    p.progress = (p.progress + p.speed) % 1;
-    const point = p.path.getPointAtLength(p.progress * len);
-    const flicker = 0.4 + Math.sin(time * 0.006 + p.offset) * 0.25 + 0.35;
-    p.el.setAttribute("cx", point.x);
-    p.el.setAttribute("cy", point.y);
-    p.el.setAttribute("opacity", clamp(flicker, 0.16, 0.92));
-  });
-
-  els.starField.querySelectorAll("circle").forEach((s,i) => {
-    const base = Number(s.dataset.base);
-    const phase = Number(s.dataset.phase);
-    s.setAttribute("opacity", base + Math.sin(time * 0.0018 + phase) * 0.08);
-  });
-
-  document.querySelectorAll(".metricPanel").forEach((panel,i) => {
-    const bob = Math.sin(time * 0.0012 + i) * 4;
-    const current = panel.getAttribute("transform");
-    const match = current.match(/translate\(([-\d.]+) ([-\d.]+)\)/);
-    if(match){
-      const x = Number(match[1]);
-      const baseY = [258,432,606,258,432,606][i] || Number(match[2]);
-      panel.setAttribute("transform", `translate(${x} ${baseY + bob})`);
-    }
-  });
-
-  updateMetrics();
-  requestAnimationFrame(animateScene);
-}
-
-buildStars();
-buildBars();
-buildSignalNodes();
-buildParticles();
-setMode("readiness");
-requestAnimationFrame(animateScene);
+animate();
 </script>
-
 </body>
 </html>
