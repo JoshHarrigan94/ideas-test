@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Track Loop — Pass 1</title>
+<title>Tennis Court Motion Poster — Prompt 1</title>
 
 <style>
 * {
@@ -16,7 +16,7 @@ html,
 body {
   width: 100%;
   min-height: 100%;
-  background: #071625;
+  background: #061728;
   overflow: hidden;
 }
 
@@ -29,483 +29,262 @@ svg {
   width: 100vw;
   height: 100vh;
   display: block;
-  background: #071625;
-  transform: scale(1.45) translateY(-40px);
-  transform-origin: center;
+  background: #061728;
 }
 
-.track-red {
-  fill: #e94319;
+.blue-court {
+  fill: #078bd4;
 }
 
-.track-red-dark {
-  fill: #c93416;
-  opacity: 0.45;
+.orange-court {
+  fill: #ff8a00;
 }
 
-.infield {
-  fill: #0077b8;
+.dark-world {
+  fill: #061728;
 }
 
-.outer-blue {
-  fill: #062033;
-}
-
-.line {
+.court-line {
+  stroke: #fff7df;
+  stroke-width: 6;
+  stroke-linecap: square;
   fill: none;
-  stroke: #ffe7bf;
-  stroke-width: 5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
 
-.thin-line {
-  fill: none;
-  stroke: #ffe7bf;
-  stroke-width: 3;
-  stroke-linecap: round;
-  opacity: 0.92;
+.net-post {
+  fill: #fff7df;
 }
 
-.mark {
-  stroke: #ffe7bf;
-  stroke-width: 4;
-  stroke-linecap: round;
+.net-post-side {
+  fill: #d8c7a9;
+}
+
+.net-line {
+  stroke: #071625;
+  stroke-width: 2;
   opacity: 0.9;
 }
 
-.number {
-  font-family: Arial, Helvetica, sans-serif;
-  font-size: 42px;
-  font-weight: 800;
-  fill: #ffd9aa;
-  opacity: 0.72;
-}
-
 .shadow {
-  fill: #06121f;
-  opacity: 0.72;
+  fill: #051320;
+  opacity: 0.66;
 }
 
-.hurdle-white {
-  fill: #ffe7bf;
+.shadow-light {
+  fill: #051320;
+  opacity: 0.36;
 }
 
-.hurdle-dark {
-  fill: #06121f;
+.ball {
+  fill: #f5e800;
+}
+
+.ball-side {
+  fill: #071625;
+  opacity: 0.82;
+}
+
+.machine-red {
+  fill: #9b140f;
+}
+
+.machine-dark {
+  fill: #4d0908;
+}
+
+.machine-yellow {
+  fill: #f5e800;
+}
+
+.machine-wheel {
+  fill: #4c3028;
 }
 
 .texture {
-  opacity: 0.13;
+  opacity: 0.15;
   mix-blend-mode: multiply;
 }
 
-.speck {
-  fill: #581d12;
-  opacity: 0.32;
+.speck-blue {
+  fill: #003e68;
 }
 
-.blue-speck {
-  fill: #00101c;
-  opacity: 0.25;
+.speck-orange {
+  fill: #814300;
 }
 
-.runner-on-path {
-  transform-origin: center;
-}
-
-.runner-shadow {
-  fill: #06121f;
-  opacity: 0.7;
-  filter: blur(1px);
-  animation: shadowPulse 0.42s ease-in-out infinite;
-}
-
-.runner-body {
-  transform-origin: center;
-  animation: bodyPulse 0.42s ease-in-out infinite;
-}
-
-.limb {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation-duration: 0.42s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-.front-leg,
-.rear-arm,
-.front-shoe {
-  animation-name: strideA;
-}
-
-.rear-leg,
-.front-arm,
-.rear-shoe {
-  animation-name: strideB;
-}
-
-.torso,
-.head {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: torsoRhythm 0.42s ease-in-out infinite;
-}
-
-.shoe {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation-duration: 0.42s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-@keyframes strideA {
-  0%, 100% {
-    transform: rotate(-18deg) translateY(0);
-  }
-
-  50% {
-    transform: rotate(18deg) translateY(-3px);
-  }
-}
-
-@keyframes strideB {
-  0%, 100% {
-    transform: rotate(18deg) translateY(-3px);
-  }
-
-  50% {
-    transform: rotate(-18deg) translateY(0);
-  }
-}
-
-@keyframes bodyPulse {
-  0%, 100% {
-    transform: rotate(90deg) scale(0.9) translateY(0);
-  }
-
-  50% {
-    transform: rotate(90deg) scale(0.92) translateY(-2px);
-  }
-}
-
-@keyframes torsoRhythm {
-  0%, 100% {
-    transform: rotate(-4deg);
-  }
-
-  50% {
-    transform: rotate(4deg);
-  }
-}
-
-@keyframes shadowPulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.72;
-  }
-
-  50% {
-    transform: scale(0.82);
-    opacity: 0.46;
-  }
-}
-
-.runner-on-path {
-  animation: runnerDepth 9s linear infinite;
-}
-
-@keyframes runnerDepth {
-  0% { opacity: 1; }
-  18% { opacity: .88; }
-  38% { opacity: .72; }
-  58% { opacity: .82; }
-  78% { opacity: 1; }
-  100% { opacity: 1; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001s !important;
-    animation-iteration-count: 1 !important;
-  }
+.ladder-line {
+  stroke: #fff7df;
+  stroke-width: 3;
+  fill: none;
+  opacity: 0.75;
 }
 </style>
 </head>
 
 <body>
 
-<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg" aria-label="Stylised aerial running track">
+<svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
 
-  <!-- deep blue world -->
-  <rect class="outer-blue" width="1200" height="900" />
+  <!-- background -->
+  <rect class="dark-world" width="1200" height="900" />
 
-  <!-- large blue infield cutaway -->
-  <path
-    class="infield"
-    d="M-120 900
-       C30 670 110 520 210 385
-       C330 225 500 105 720 45
-       L1330 -90
-       L1330 900 Z"
-  />
+  <!-- orange court area -->
+  <path class="orange-court" d="M0 0 H560 L420 275 L0 405 Z" />
 
-  <!-- track mass -->
-  <path
-    class="track-red"
-    d="M-170 850
-       C-20 610 95 430 245 285
-       C430 105 655 15 940 -20
-       L1210 -50
-       L1210 610
-       C955 615 760 655 595 760
-       C520 808 465 858 420 930
-       Z"
-  />
+  <!-- blue main court -->
+  <path class="blue-court" d="M560 0 H1200 V900 H0 V405 L420 275 Z" />
 
-  <!-- darker inner sweep -->
-  <path
-    class="track-red-dark"
-    d="M-120 850
-       C35 610 145 455 285 330
-       C470 165 690 90 950 70
-       L1210 52
-       L1210 210
-       C940 230 745 290 585 420
-       C405 565 310 715 235 930
-       Z"
-  />
+  <!-- far dark upper strip -->
+  <path class="dark-world" d="M560 0 H1200 L1060 75 H515 Z" opacity="0.9" />
 
-  <!-- inner blue void -->
-  <path
-    class="outer-blue"
-    d="M-170 900
-       C0 650 115 500 260 390
-       C425 265 620 210 875 200
-       L1210 190
-       L1210 360
-       C925 370 720 435 570 570
-       C450 678 385 795 340 930
-       Z"
-  />
+  <!-- court white lines -->
+  <g>
+    <path class="court-line" d="M0 565 L705 0" />
+    <path class="court-line" d="M0 725 L885 0" />
+    <path class="court-line" d="M0 890 L1070 0" />
 
-  <!-- lane curves -->
-  <path class="line" d="M-105 835 C45 610 160 445 315 310 C500 150 705 80 965 55 L1210 38" />
-  <path class="thin-line" d="M-45 850 C100 635 205 480 355 350 C535 195 725 130 980 108 L1210 92" />
-  <path class="thin-line" d="M15 865 C155 660 255 520 395 390 C570 240 750 180 995 162 L1210 148" />
-  <path class="thin-line" d="M75 880 C210 690 310 560 435 430 C600 285 780 230 1010 218 L1210 205" />
-  <path class="thin-line" d="M135 895 C270 720 360 595 475 470 C630 330 805 280 1025 274 L1210 262" />
-  <path class="thin-line" d="M195 910 C325 750 415 630 515 510 C665 375 830 330 1040 330 L1210 320" />
+    <path class="court-line" d="M0 565 L1200 320" />
+    <path class="court-line" d="M0 725 L1200 475" />
+    <path class="court-line" d="M0 890 L1200 630" />
 
-  <!-- lower straight lane divider hints -->
-  <line class="line" x1="430" y1="812" x2="1185" y2="804" />
-  <line class="thin-line" x1="478" y1="756" x2="1185" y2="750" />
-  <line class="thin-line" x1="528" y1="703" x2="1185" y2="696" />
-
-  <!-- lane tick marks on curve -->
-  <line class="mark" x1="520" y1="286" x2="540" y2="306" />
-  <line class="mark" x1="602" y1="240" x2="622" y2="260" />
-  <line class="mark" x1="690" y1="205" x2="710" y2="225" />
-  <line class="mark" x1="785" y1="178" x2="805" y2="198" />
-
-  <!-- lane numbers -->
-  <g transform="rotate(-2 760 795)">
-    <text class="number" x="680" y="820">1</text>
-    <text class="number" x="785" y="817">2</text>
-    <text class="number" x="890" y="814">3</text>
-    <text class="number" x="995" y="811">4</text>
-    <text class="number" x="1100" y="808">5</text>
+    <path class="court-line" d="M530 0 L1200 365" />
+    <path class="court-line" d="M330 900 L1200 715" />
   </g>
 
-  <!-- finish/start line -->
-  <line class="line" x1="610" y1="675" x2="1210" y2="668" />
+  <!-- umpire chair on orange court -->
+  <g transform="translate(180 10)">
+    <path class="shadow-light" d="M-55 190 L110 245 L220 205 L48 150 Z" />
 
-  <!-- hurdle shadow -->
+    <path class="ladder-line" d="M0 0 L0 160 L-50 220" />
+    <path class="ladder-line" d="M65 0 L65 165 L120 230" />
+    <path class="ladder-line" d="M0 0 H65" />
+    <path class="ladder-line" d="M0 45 H65" />
+    <path class="ladder-line" d="M0 90 H65" />
+
+    <path class="ladder-line" d="M65 55 L120 35" />
+    <path class="ladder-line" d="M65 95 L125 75" />
+    <path class="ladder-line" d="M65 135 L130 112" />
+  </g>
+
+  <!-- net shadow -->
   <path
     class="shadow"
-    d="M930 170
-       L1115 310
-       L1090 338
-       L905 198 Z"
+    d="M300 290
+       L1135 765
+       L1100 815
+       L265 340 Z"
   />
 
-  <!-- hurdle -->
-  <g transform="translate(900 105) rotate(34)">
-    <rect class="hurdle-white" x="0" y="0" width="150" height="16" rx="2" />
-    <rect class="hurdle-dark" x="12" y="16" width="10" height="70" rx="2" />
-    <rect class="hurdle-dark" x="128" y="16" width="10" height="70" rx="2" />
-    <rect class="hurdle-dark" x="5" y="84" width="52" height="8" rx="2" />
-    <rect class="hurdle-dark" x="94" y="84" width="52" height="8" rx="2" />
+  <!-- net posts -->
+  <g>
+    <path class="shadow" d="M330 210 L385 250 L365 290 L310 250 Z" />
+
+    <path class="net-post-side" d="M326 158 L350 174 L350 287 L326 270 Z" />
+    <path class="net-post" d="M350 174 L370 163 L370 276 L350 287 Z" />
+    <path class="net-post" d="M326 158 L346 147 L370 163 L350 174 Z" />
+
+    <path class="net-post-side" d="M1122 620 L1148 636 L1148 735 L1122 720 Z" />
+    <path class="net-post" d="M1148 636 L1168 625 L1168 724 L1148 735 Z" />
+    <path class="net-post" d="M1122 620 L1142 608 L1168 625 L1148 636 Z" />
   </g>
 
-    <!-- PASS 2: hidden lane-one running path -->
-  <path
-    id="laneOnePath"
-    d="M395 435
-       C265 535 185 705 118 880
-       C92 948 168 985 238 923
-       C330 842 405 732 515 625
-       C682 462 905 395 1210 384
-       C1290 381 1285 245 1205 248
-       C872 260 620 340 430 515
-       C315 620 240 750 182 900"
-    fill="none"
-    stroke="#ffffff"
-    stroke-width="3"
-    opacity="0"
-  />
+  <!-- net mesh -->
+  <g>
+    <path d="M358 183 L1155 642 L1155 710 L358 252 Z" fill="rgba(255,247,223,0.13)" />
 
-      <!-- PASS 4: animated runner with stride cycle -->
-  <g class="runner-on-path">
+    <!-- top and bottom cords -->
+    <path class="net-line" d="M358 183 L1155 642" stroke-width="5" />
+    <path class="net-line" d="M358 252 L1155 710" stroke-width="4" />
 
-    <g class="runner-shadow">
-      <ellipse cx="36" cy="60" rx="46" ry="14" />
+    <!-- vertical mesh -->
+    <g>
+      <line class="net-line" x1="380" y1="196" x2="380" y2="265" />
+      <line class="net-line" x1="420" y1="219" x2="420" y2="288" />
+      <line class="net-line" x1="460" y1="242" x2="460" y2="311" />
+      <line class="net-line" x1="500" y1="265" x2="500" y2="334" />
+      <line class="net-line" x1="540" y1="288" x2="540" y2="357" />
+      <line class="net-line" x1="580" y1="311" x2="580" y2="380" />
+      <line class="net-line" x1="620" y1="334" x2="620" y2="403" />
+      <line class="net-line" x1="660" y1="357" x2="660" y2="426" />
+      <line class="net-line" x1="700" y1="380" x2="700" y2="449" />
+      <line class="net-line" x1="740" y1="403" x2="740" y2="472" />
+      <line class="net-line" x1="780" y1="426" x2="780" y2="495" />
+      <line class="net-line" x1="820" y1="449" x2="820" y2="518" />
+      <line class="net-line" x1="860" y1="472" x2="860" y2="541" />
+      <line class="net-line" x1="900" y1="495" x2="900" y2="564" />
+      <line class="net-line" x1="940" y1="518" x2="940" y2="587" />
+      <line class="net-line" x1="980" y1="541" x2="980" y2="610" />
+      <line class="net-line" x1="1020" y1="564" x2="1020" y2="633" />
+      <line class="net-line" x1="1060" y1="587" x2="1060" y2="656" />
+      <line class="net-line" x1="1100" y1="610" x2="1100" y2="679" />
     </g>
 
-    <g class="runner-body" transform="rotate(90) scale(0.9)">
-
-      <!-- rear arm -->
-      <path
-        class="limb arm rear-arm"
-        d="M-5 -8 C-22 -4 -32 8 -38 22"
-        stroke="#06121f"
-        stroke-width="9"
-        stroke-linecap="round"
-        fill="none"
-      />
-
-      <!-- rear leg -->
-      <path
-        class="limb leg rear-leg"
-        d="M-2 24 C-18 38 -27 51 -34 68"
-        stroke="#06121f"
-        stroke-width="10"
-        stroke-linecap="round"
-        fill="none"
-      />
-
-      <!-- front leg -->
-      <path
-        class="limb leg front-leg"
-        d="M5 23 C23 33 35 45 47 60"
-        stroke="#06121f"
-        stroke-width="10"
-        stroke-linecap="round"
-        fill="none"
-      />
-
-      <!-- torso -->
-      <rect
-        class="torso"
-        x="-12"
-        y="-9"
-        width="24"
-        height="42"
-        rx="11"
-        fill="#ffb13b"
-      />
-
-      <!-- front arm -->
-      <path
-        class="limb arm front-arm"
-        d="M7 -6 C24 -12 36 -21 45 -35"
-        stroke="#06121f"
-        stroke-width="9"
-        stroke-linecap="round"
-        fill="none"
-      />
-
-      <!-- head -->
-      <ellipse
-        class="head"
-        cx="0"
-        cy="-27"
-        rx="13"
-        ry="14"
-        fill="#06121f"
-      />
-
-      <!-- shoes -->
-      <ellipse
-        class="shoe rear-shoe"
-        cx="-37"
-        cy="72"
-        rx="11"
-        ry="6"
-        fill="#ffe7bf"
-      />
-
-      <ellipse
-        class="shoe front-shoe"
-        cx="51"
-        cy="63"
-        rx="11"
-        ry="6"
-        fill="#ffe7bf"
-      />
-
+    <!-- horizontal mesh -->
+    <g>
+      <path class="net-line" d="M358 197 L1155 656" />
+      <path class="net-line" d="M358 211 L1155 670" />
+      <path class="net-line" d="M358 225 L1155 684" />
+      <path class="net-line" d="M358 239 L1155 698" />
     </g>
-
-    <animateMotion
-      dur="9s"
-      repeatCount="indefinite"
-      rotate="auto"
-    >
-      <mpath href="#laneOnePath" />
-    </animateMotion>
-
   </g>
 
-  <!-- texture speckles -->
+  <!-- ball machine shadow -->
+  <path class="shadow" d="M930 135 L1040 190 L990 230 L885 172 Z" />
+
+  <!-- ball machine -->
+  <g transform="translate(920 85)">
+    <ellipse class="machine-dark" cx="45" cy="38" rx="34" ry="22" />
+    <ellipse class="machine-red" cx="45" cy="30" rx="38" ry="24" />
+    <ellipse class="machine-yellow" cx="32" cy="24" rx="7" ry="6" />
+    <ellipse class="machine-yellow" cx="47" cy="22" rx="8" ry="6" />
+    <ellipse class="machine-yellow" cx="60" cy="27" rx="7" ry="6" />
+
+    <rect class="machine-red" x="28" y="52" width="36" height="58" rx="12" />
+    <rect class="machine-dark" x="20" y="102" width="54" height="18" rx="8" />
+
+    <ellipse class="machine-wheel" cx="12" cy="120" rx="14" ry="10" />
+    <ellipse class="machine-wheel" cx="80" cy="120" rx="14" ry="10" />
+  </g>
+
+  <!-- tennis balls -->
+  <g>
+    <path class="shadow" d="M225 287 C245 292 255 304 246 314 C224 310 211 301 214 292 Z" />
+    <circle class="ball" cx="225" cy="280" r="10" />
+    <path class="ball-side" d="M217 273 C226 276 232 283 235 291 C226 290 218 284 217 273 Z" />
+
+    <path class="shadow" d="M535 435 C555 441 565 452 556 462 C534 458 521 449 524 440 Z" />
+    <circle class="ball" cx="535" cy="428" r="10" />
+    <path class="ball-side" d="M527 421 C536 424 542 431 545 439 C536 438 528 432 527 421 Z" />
+
+    <path class="shadow" d="M590 463 C610 469 620 480 611 490 C589 486 576 477 579 468 Z" />
+    <circle class="ball" cx="590" cy="456" r="10" />
+    <path class="ball-side" d="M582 449 C591 452 597 459 600 467 C591 466 583 460 582 449 Z" />
+
+    <path class="shadow" d="M900 707 C920 713 930 724 921 734 C899 730 886 721 889 712 Z" />
+    <circle class="ball" cx="900" cy="700" r="10" />
+    <path class="ball-side" d="M892 693 C901 696 907 703 910 711 C901 710 893 704 892 693 Z" />
+
+    <path class="shadow" d="M1110 492 C1130 498 1140 509 1131 519 C1109 515 1096 506 1099 497 Z" />
+    <circle class="ball" cx="1110" cy="485" r="10" />
+    <path class="ball-side" d="M1102 478 C1111 481 1117 488 1120 496 C1111 495 1103 489 1102 478 Z" />
+  </g>
+
+  <!-- texture -->
   <g class="texture">
-    <circle class="speck" cx="100" cy="720" r="1.4" />
-    <circle class="speck" cx="180" cy="650" r="1" />
-    <circle class="speck" cx="270" cy="560" r="1.2" />
-    <circle class="speck" cx="390" cy="405" r="1" />
-    <circle class="speck" cx="520" cy="325" r="1.3" />
-    <circle class="speck" cx="710" cy="250" r="1" />
-    <circle class="speck" cx="900" cy="190" r="1.2" />
-    <circle class="speck" cx="1050" cy="420" r="1.1" />
-    <circle class="speck" cx="890" cy="590" r="1" />
-    <circle class="speck" cx="730" cy="705" r="1.4" />
-    <circle class="speck" cx="580" cy="820" r="1" />
+    <circle class="speck-blue" cx="120" cy="480" r="1.4" />
+    <circle class="speck-blue" cx="240" cy="530" r="1.1" />
+    <circle class="speck-blue" cx="410" cy="620" r="1.5" />
+    <circle class="speck-blue" cx="660" cy="430" r="1.2" />
+    <circle class="speck-blue" cx="790" cy="760" r="1.3" />
+    <circle class="speck-blue" cx="980" cy="390" r="1.1" />
+    <circle class="speck-blue" cx="1100" cy="820" r="1.5" />
 
-    <circle class="blue-speck" cx="1000" cy="120" r="1.4" />
-    <circle class="blue-speck" cx="1080" cy="240" r="1.2" />
-    <circle class="blue-speck" cx="100" cy="850" r="1.3" />
-    <circle class="blue-speck" cx="280" cy="820" r="1" />
+    <circle class="speck-orange" cx="95" cy="155" r="1.3" />
+    <circle class="speck-orange" cx="185" cy="255" r="1.1" />
+    <circle class="speck-orange" cx="335" cy="90" r="1.4" />
+    <circle class="speck-orange" cx="410" cy="225" r="1.2" />
   </g>
-
-  <!-- PASS 5: subtle poster vignette -->
-  <rect
-    width="1200"
-    height="900"
-    fill="none"
-    stroke="#020914"
-    stroke-width="42"
-    opacity="0.28"
-  />
-
-  <!-- PASS 5: warm sunlight glaze -->
-  <path
-    d="M720 -80 L1280 -80 L1280 240 C1040 210 850 160 680 45 Z"
-    fill="#ffd36f"
-    opacity="0.08"
-  />
-
-  <!-- PASS 5: extra long editorial shadow from runner zone -->
-  <path
-    d="M390 430
-       C520 500 625 575 730 680
-       L695 735
-       C570 610 470 530 355 465 Z"
-    fill="#06121f"
-    opacity="0.22"
-  />
 
 </svg>
 
