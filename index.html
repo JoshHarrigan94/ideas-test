@@ -1,211 +1,1204 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WebGL Singularity</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>ORACLE / Singularity Engine — Pass 1</title>
+
 <style>
-html,body{margin:0;height:100%;overflow:hidden;background:#02030a;font-family:Inter,system-ui}
-canvas{display:block;width:100vw;height:100vh;touch-action:none}
-.hud{position:fixed;left:16px;top:16px;color:#dcecff;background:rgba(4,8,18,.45);
-border:1px solid rgba(255,255,255,.14);backdrop-filter:blur(14px);border-radius:18px;
-padding:14px 16px;box-shadow:0 20px 70px #0008}
-.hud b{font-size:12px;letter-spacing:.18em}
-.hud p{margin:6px 0 0;color:#8fa6bd;font-size:13px}
+:root {
+  --bg: #02030a;
+  --panel: rgba(5, 9, 18, 0.62);
+  --panel-strong: rgba(8, 14, 28, 0.82);
+  --line: rgba(255, 255, 255, 0.13);
+  --line-strong: rgba(255, 255, 255, 0.28);
+  --text: #e8f3ff;
+  --muted: #8fa6bd;
+  --soft: #516a84;
+  --cyan: #60f0ff;
+  --blue: #3b7cff;
+  --violet: #a85cff;
+  --amber: #ff9e42;
+  --danger: #ff4f6d;
+  --good: #7dffbe;
+  --radius: 22px;
+  --shadow: 0 24px 90px rgba(0, 0, 0, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  touch-action: none;
+  background: radial-gradient(circle at center, #08111f, #02030a 70%);
+}
+
+.app {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.08) 35%, rgba(0,0,0,.62) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,.12), transparent 30%, rgba(0,0,0,.34));
+  pointer-events: none;
+  mix-blend-mode: multiply;
+}
+
+.scanlines {
+  position: fixed;
+  inset: 0;
+  opacity: 0.09;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.08) 0px,
+      rgba(255,255,255,.08) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+  pointer-events: none;
+}
+
+.noise {
+  position: fixed;
+  inset: -30%;
+  opacity: 0.045;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(255,255,255,.8) 0 1px, transparent 1px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.7) 0 1px, transparent 1px),
+    radial-gradient(circle at 40% 80%, rgba(255,255,255,.6) 0 1px, transparent 1px);
+  background-size: 41px 53px, 73px 67px, 97px 89px;
+  animation: grain 1.8s steps(2) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate3d(0,0,0); }
+  25% { transform: translate3d(-2%,1%,0); }
+  50% { transform: translate3d(1%,-2%,0); }
+  75% { transform: translate3d(2%,2%,0); }
+  100% { transform: translate3d(0,0,0); }
+}
+
+.hud {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  top: max(16px, env(safe-area-inset-top));
+  width: min(390px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid var(--line);
+  background:
+    linear-gradient(145deg, rgba(8, 14, 28, 0.84), rgba(4, 7, 14, 0.48)),
+    radial-gradient(circle at top left, rgba(96,240,255,.12), transparent 48%);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  pointer-events: auto;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.brand-kicker {
+  margin: 0 0 8px;
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(22px, 5vw, 34px);
+  line-height: 0.95;
+  letter-spacing: -0.07em;
+  font-weight: 780;
+}
+
+.sub {
+  margin: 10px 0 0;
+  max-width: 300px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(125,255,190,.24);
+  background: rgba(125,255,190,.08);
+  color: var(--good);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: currentColor;
+  box-shadow: 0 0 18px currentColor;
+  animation: dotPulse 1.35s infinite ease-in-out;
+}
+
+@keyframes dotPulse {
+  0%, 100% { opacity: .45; transform: scale(.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.metric {
+  min-width: 0;
+  padding: 11px 10px;
+  border: 1px solid rgba(255,255,255,.09);
+  border-radius: 16px;
+  background: rgba(255,255,255,.045);
+}
+
+.metric span {
+  display: block;
+  color: var(--soft);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .13em;
+  font-weight: 800;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 18px;
+  letter-spacing: -.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric small {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.bar {
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  margin-top: 8px;
+  background: rgba(255,255,255,.08);
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  width: var(--v, 50%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--amber));
+  box-shadow: 0 0 18px rgba(96,240,255,.3);
+}
+
+.control-row {
+  display: flex;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+button {
+  pointer-events: auto;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text);
+  background: rgba(255,255,255,.055);
+  border-radius: 14px;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+button:active {
+  transform: scale(.98);
+}
+
+button.primary {
+  border-color: rgba(96,240,255,.28);
+  background: linear-gradient(135deg, rgba(96,240,255,.16), rgba(168,92,255,.12));
+}
+
+.lower-panel {
+  position: fixed;
+  left: max(16px, env(safe-area-inset-left));
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 14px;
+  pointer-events: none;
+}
+
+.readout {
+  max-width: 520px;
+  padding: 14px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(5, 9, 18, 0.48);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: var(--shadow);
+}
+
+.readout-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.readout-title strong {
+  font-size: 11px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.readout-title span {
+  color: var(--cyan);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.signal {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(22, 1fr);
+  gap: 3px;
+  height: 36px;
+  align-items: end;
+}
+
+.signal i {
+  display: block;
+  min-height: 3px;
+  border-radius: 99px;
+  background: linear-gradient(to top, rgba(96,240,255,.35), rgba(168,92,255,.9));
+  opacity: .75;
+  transform-origin: bottom;
+}
+
+.orbital-compass {
+  width: 118px;
+  height: 118px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background:
+    radial-gradient(circle, transparent 0 28%, rgba(255,255,255,.05) 29% 30%, transparent 31% 100%),
+    conic-gradient(from 0deg, rgba(96,240,255,.18), transparent, rgba(168,92,255,.18), transparent, rgba(96,240,255,.18));
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 70px rgba(0,0,0,.4);
+}
+
+.orbital-compass::before,
+.orbital-compass::after {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+.orbital-compass::after {
+  inset: 43px;
+  background: rgba(96,240,255,.65);
+  box-shadow: 0 0 24px rgba(96,240,255,.8);
+}
+
+.needle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 48%;
+  transform-origin: 50% 0%;
+  transform: rotate(var(--a, 0deg));
+  background: linear-gradient(to bottom, rgba(255,255,255,.95), transparent);
+}
+
+.boot {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at center, rgba(8,17,31,.95), rgba(2,3,10,.98));
+  z-index: 20;
+  transition: opacity .7s ease, visibility .7s ease;
+  pointer-events: none;
+}
+
+.boot.done {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.boot-card {
+  width: min(420px, calc(100vw - 32px));
+  padding: 22px;
+  border-radius: 26px;
+  border: 1px solid rgba(255,255,255,.14);
+  background: rgba(255,255,255,.045);
+  box-shadow: var(--shadow);
+}
+
+.boot-card p {
+  margin: 0 0 14px;
+  color: var(--cyan);
+  font-size: 11px;
+  letter-spacing: .2em;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.boot-card h2 {
+  margin: 0;
+  font-size: 30px;
+  letter-spacing: -.07em;
+}
+
+.boot-line {
+  margin-top: 18px;
+  height: 7px;
+  border-radius: 99px;
+  background: rgba(255,255,255,.08);
+  overflow: hidden;
+}
+
+.boot-line i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--cyan), var(--violet), var(--amber));
+  animation: bootLoad 1.2s ease forwards;
+}
+
+@keyframes bootLoad {
+  to { width: 100%; }
+}
+
+.error {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: #02030a;
+}
+
+.error.show {
+  display: grid;
+}
+
+.error-card {
+  width: min(520px, 100%);
+  padding: 22px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,79,109,.35);
+  background: rgba(255,79,109,.08);
+}
+
+.error-card h2 {
+  margin: 0 0 10px;
+}
+
+.error-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .hud {
+    padding: 14px;
+  }
+
+  .metrics {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .lower-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .orbital-compass {
+    display: none;
+  }
+
+  .readout {
+    max-width: none;
+  }
+}
+
+@media (max-width: 410px) {
+  .metric strong {
+    font-size: 15px;
+  }
+
+  .metric {
+    padding: 9px 8px;
+  }
+
+  button {
+    padding: 10px;
+    font-size: 10px;
+  }
+}
 </style>
 </head>
+
 <body>
-<canvas id="c"></canvas>
-<div class="hud"><b>WEBGL SINGULARITY</b><p>Touch / drag to bend the nebula</p></div>
+<canvas id="oracle-canvas"></canvas>
+
+<div class="app">
+  <div class="vignette"></div>
+  <div class="scanlines"></div>
+  <div class="noise"></div>
+
+  <section class="hud">
+    <div class="hud-top">
+      <div>
+        <p class="brand-kicker">ORACLE ENGINE / PASS 1</p>
+        <h1>Singularity Field</h1>
+        <p class="sub">A touch-reactive WebGL black-hole nebula. Drag to bend the field. Hold to collapse gravity.</p>
+      </div>
+      <div class="status-pill">
+        <i class="status-dot"></i>
+        Live
+      </div>
+    </div>
+
+    <div class="metrics">
+      <div class="metric">
+        <span>Coherence</span>
+        <strong id="coherence">82</strong>
+        <small>field sync</small>
+        <div class="bar"><i id="coherenceBar" style="--v:82%"></i></div>
+      </div>
+      <div class="metric">
+        <span>Gravity</span>
+        <strong id="gravity">0.42</strong>
+        <small>well depth</small>
+        <div class="bar"><i id="gravityBar" style="--v:42%"></i></div>
+      </div>
+      <div class="metric">
+        <span>Entropy</span>
+        <strong id="entropy">18</strong>
+        <small>noise load</small>
+        <div class="bar"><i id="entropyBar" style="--v:18%"></i></div>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button class="primary" id="pulseBtn">Pulse</button>
+      <button id="resetBtn">Recenter</button>
+      <button id="qualityBtn">Quality</button>
+    </div>
+  </section>
+
+  <section class="lower-panel">
+    <div class="readout">
+      <div class="readout-title">
+        <strong>Field Oscillation</strong>
+        <span id="fps">-- FPS</span>
+      </div>
+      <div class="signal" id="signal"></div>
+    </div>
+
+    <div class="orbital-compass">
+      <i class="needle" id="needle"></i>
+    </div>
+  </section>
+</div>
+
+<div class="boot" id="boot">
+  <div class="boot-card">
+    <p>Initialising visual core</p>
+    <h2>ORACLE is waking</h2>
+    <div class="boot-line"><i></i></div>
+  </div>
+</div>
+
+<div class="error" id="error">
+  <div class="error-card">
+    <h2>WebGL could not start</h2>
+    <p id="errorText">Your browser or device does not appear to support the required graphics context.</p>
+  </div>
+</div>
 
 <script>
-const canvas = document.getElementById("c");
-const gl = canvas.getContext("webgl", {antialias:false, alpha:false, powerPreference:"high-performance"});
-if(!gl){document.body.innerHTML="<h2 style='color:white;padding:24px'>WebGL unavailable</h2>";throw 0;}
+(() => {
+  "use strict";
 
-const vert = `
-attribute vec2 p;
-void main(){gl_Position=vec4(p,0.,1.);}
-`;
+  const canvas = document.getElementById("oracle-canvas");
+  const boot = document.getElementById("boot");
+  const error = document.getElementById("error");
+  const errorText = document.getElementById("errorText");
 
-const frag = `
-precision highp float;
+  const coherenceEl = document.getElementById("coherence");
+  const gravityEl = document.getElementById("gravity");
+  const entropyEl = document.getElementById("entropy");
 
-uniform vec2 r;
-uniform vec2 m;
-uniform float t;
-uniform float down;
+  const coherenceBar = document.getElementById("coherenceBar");
+  const gravityBar = document.getElementById("gravityBar");
+  const entropyBar = document.getElementById("entropyBar");
 
-#define PI 3.14159265359
+  const pulseBtn = document.getElementById("pulseBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const qualityBtn = document.getElementById("qualityBtn");
 
-mat2 rot(float a){
-  float s=sin(a), c=cos(a);
-  return mat2(c,-s,s,c);
-}
+  const fpsEl = document.getElementById("fps");
+  const signalEl = document.getElementById("signal");
+  const needleEl = document.getElementById("needle");
 
-float hash(vec2 p){
-  p=fract(p*vec2(123.34,456.21));
-  p+=dot(p,p+45.32);
-  return fract(p.x*p.y);
-}
-
-float noise(vec3 p){
-  vec3 i=floor(p), f=fract(p);
-  f=f*f*(3.-2.*f);
-  float n=i.x+i.y*57.+113.*i.z;
-  return mix(
-    mix(mix(hash(vec2(n+0.,n+1.)),hash(vec2(n+57.,n+58.)),f.x),
-        mix(hash(vec2(n+113.,n+114.)),hash(vec2(n+170.,n+171.)),f.x),f.y),
-    mix(mix(hash(vec2(n+226.,n+227.)),hash(vec2(n+283.,n+284.)),f.x),
-        mix(hash(vec2(n+339.,n+340.)),hash(vec2(n+396.,n+397.)),f.x),f.y),
-    f.z);
-}
-
-float fbm(vec3 p){
-  float v=0., a=.5;
-  for(int i=0;i<5;i++){
-    v+=a*noise(p);
-    p*=2.05;
-    p.xy*=rot(.45+t*.015);
-    a*=.52;
+  const signalBars = [];
+  for (let i = 0; i < 22; i++) {
+    const bar = document.createElement("i");
+    bar.style.height = `${8 + Math.random() * 24}px`;
+    signalEl.appendChild(bar);
+    signalBars.push(bar);
   }
-  return v;
-}
 
-float stars(vec2 uv){
-  vec2 gv=fract(uv)-.5;
-  vec2 id=floor(uv);
-  float n=hash(id);
-  float s=smoothstep(.035,0.,length(gv));
-  return s*step(.985,n)*mix(.3,1.,hash(id+4.));
-}
+  function fail(message) {
+    errorText.textContent = message;
+    error.classList.add("show");
+  }
 
-void main(){
-  vec2 uv=(gl_FragCoord.xy-.5*r.xy)/r.y;
-  vec2 mouse=(m-.5*r)/r.y;
-  
-  float time=t*.35;
-  vec2 p=uv;
-  
-  float dMouse=length(p-mouse);
-  p += normalize(p-mouse)*(.045/(dMouse+.12))*down;
-  
-  float radius=length(p);
-  float angle=atan(p.y,p.x);
-  
-  float lens=.18/(radius+.08);
-  angle += lens*.75 + time*.18;
-  
-  vec2 disk=vec2(cos(angle),sin(angle))*radius;
-  disk.x*=1.65;
-  disk*=rot(time*.18);
-  
-  float accretion=exp(-abs(radius-.34)*10.);
-  accretion*=1.+.55*sin(angle*7.+time*5.);
-  
-  float bands=fbm(vec3(disk*4.5,time));
-  float plasma=pow(max(0.,bands),2.2)*accretion;
-  
-  float core=smoothstep(.18,.02,radius);
-  float eventHorizon=smoothstep(.23,.18,radius)*smoothstep(.055,.12,radius);
-  
-  float jet=exp(-abs(p.x)*22.)*smoothstep(.14,.03,abs(p.y));
-  jet*=.22+.78*fbm(vec3(p*6.,time+2.));
-  
-  float field=0.;
-  field+=stars(uv*90.+time*4.);
-  field+=stars(uv*150.-time*3.)*.45;
-  field+=stars(uv*260.+sin(time))*.25;
-  
-  float neb=fbm(vec3(uv*2.2,time*.35));
-  neb*=smoothstep(1.4,.1,length(uv));
-  
-  vec3 deep=vec3(.01,.015,.04);
-  vec3 blue=vec3(.03,.45,1.);
-  vec3 cyan=vec3(.0,.95,1.);
-  vec3 violet=vec3(.75,.18,1.);
-  vec3 ember=vec3(1.,.38,.08);
-  vec3 white=vec3(1.,.9,.72);
-  
-  vec3 col=deep;
-  col+=field*vec3(.8,.92,1.4);
-  col+=neb*vec3(.05,.12,.28);
-  col+=plasma*mix(cyan,ember,smoothstep(.15,.8,sin(angle*3.+time)+.5))*2.2;
-  col+=eventHorizon*white*1.8;
-  col+=jet*mix(blue,violet,abs(p.y))*1.8;
-  col*=1.-core*.95;
-  
-  float glow=exp(-radius*2.6);
-  col+=glow*vec3(.02,.09,.22);
-  
-  col=1.-exp(-col*1.35);
-  col=pow(col,vec3(.82));
-  
-  gl_FragColor=vec4(col,1.);
-}
-`;
+  const gl =
+    canvas.getContext("webgl", {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      preserveDrawingBuffer: false,
+      powerPreference: "high-performance"
+    }) ||
+    canvas.getContext("experimental-webgl", {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      preserveDrawingBuffer: false
+    });
 
-function shader(type,src){
-  const s=gl.createShader(type);
-  gl.shaderSource(s,src);
-  gl.compileShader(s);
-  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw gl.getShaderInfoLog(s);
-  return s;
-}
+  if (!gl) {
+    fail("WebGL is unavailable on this browser/device. Try Safari/Chrome with hardware acceleration enabled.");
+    return;
+  }
 
-const prog=gl.createProgram();
-gl.attachShader(prog,shader(gl.VERTEX_SHADER,vert));
-gl.attachShader(prog,shader(gl.FRAGMENT_SHADER,frag));
-gl.linkProgram(prog);
-gl.useProgram(prog);
+  const vertexSource = `
+    attribute vec2 aPosition;
 
-const buf=gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER,buf);
-gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+    void main() {
+      gl_Position = vec4(aPosition, 0.0, 1.0);
+    }
+  `;
 
-const loc=gl.getAttribLocation(prog,"p");
-gl.enableVertexAttribArray(loc);
-gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
+  const fragmentSource = `
+    precision highp float;
 
-const U={
-  r:gl.getUniformLocation(prog,"r"),
-  m:gl.getUniformLocation(prog,"m"),
-  t:gl.getUniformLocation(prog,"t"),
-  down:gl.getUniformLocation(prog,"down")
-};
+    uniform vec2 uResolution;
+    uniform vec2 uPointer;
+    uniform vec2 uVelocity;
+    uniform float uTime;
+    uniform float uDown;
+    uniform float uPulse;
+    uniform float uQuality;
+    uniform float uAspect;
+    uniform float uBreath;
 
-let mx=innerWidth*.5,my=innerHeight*.5,down=0;
-let dpr=Math.min(devicePixelRatio||1,1.6);
+    #define PI 3.141592653589793
+    #define TAU 6.283185307179586
 
-function resize(){
-  canvas.width=innerWidth*dpr;
-  canvas.height=innerHeight*dpr;
-  gl.viewport(0,0,canvas.width,canvas.height);
-}
-resize();
-addEventListener("resize",resize);
+    mat2 rotate2d(float a) {
+      float s = sin(a);
+      float c = cos(a);
+      return mat2(c, -s, s, c);
+    }
 
-function pointer(e){
-  const touch=e.touches?e.touches[0]:e;
-  mx=touch.clientX*dpr;
-  my=(innerHeight-touch.clientY)*dpr;
-}
-addEventListener("pointermove",pointer);
-addEventListener("pointerdown",e=>{down=1;pointer(e)});
-addEventListener("pointerup",()=>down=0);
-addEventListener("touchmove",e=>{pointer(e);e.preventDefault()},{passive:false});
-addEventListener("touchstart",e=>{down=1;pointer(e)},{passive:false});
-addEventListener("touchend",()=>down=0);
+    float hash21(vec2 p) {
+      p = fract(p * vec2(234.34, 435.345));
+      p += dot(p, p + 34.23);
+      return fract(p.x * p.y);
+    }
 
-function draw(ms){
-  gl.uniform2f(U.r,canvas.width,canvas.height);
-  gl.uniform2f(U.m,mx,my);
-  gl.uniform1f(U.t,ms*.001);
-  gl.uniform1f(U.down,down);
-  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
-  requestAnimationFrame(draw);
-}
-requestAnimationFrame(draw);
+    float hash31(vec3 p) {
+      p = fract(p * vec3(0.1031, 0.11369, 0.13787));
+      p += dot(p, p.yzx + 19.19);
+      return fract((p.x + p.y) * p.z);
+    }
+
+    float noise3(vec3 p) {
+      vec3 i = floor(p);
+      vec3 f = fract(p);
+      f = f * f * (3.0 - 2.0 * f);
+
+      float n000 = hash31(i + vec3(0.0, 0.0, 0.0));
+      float n100 = hash31(i + vec3(1.0, 0.0, 0.0));
+      float n010 = hash31(i + vec3(0.0, 1.0, 0.0));
+      float n110 = hash31(i + vec3(1.0, 1.0, 0.0));
+      float n001 = hash31(i + vec3(0.0, 0.0, 1.0));
+      float n101 = hash31(i + vec3(1.0, 0.0, 1.0));
+      float n011 = hash31(i + vec3(0.0, 1.0, 1.0));
+      float n111 = hash31(i + vec3(1.0, 1.0, 1.0));
+
+      float nx00 = mix(n000, n100, f.x);
+      float nx10 = mix(n010, n110, f.x);
+      float nx01 = mix(n001, n101, f.x);
+      float nx11 = mix(n011, n111, f.x);
+
+      float nxy0 = mix(nx00, nx10, f.y);
+      float nxy1 = mix(nx01, nx11, f.y);
+
+      return mix(nxy0, nxy1, f.z);
+    }
+
+    float fbm(vec3 p) {
+      float v = 0.0;
+      float a = 0.5;
+
+      for (int i = 0; i < 6; i++) {
+        v += a * noise3(p);
+        p.xy *= rotate2d(0.47 + 0.03 * sin(uTime * 0.1));
+        p *= 2.03;
+        a *= 0.52;
+      }
+
+      return v;
+    }
+
+    float ridge(float x) {
+      return 1.0 - abs(2.0 * x - 1.0);
+    }
+
+    float starLayer(vec2 uv, float scale, float threshold, float twinkle) {
+      vec2 grid = uv * scale;
+      vec2 id = floor(grid);
+      vec2 gv = fract(grid) - 0.5;
+
+      float rnd = hash21(id);
+      float size = mix(0.015, 0.055, hash21(id + 8.2));
+      float star = smoothstep(size, 0.0, length(gv));
+
+      float blink = 0.65 + 0.35 * sin(uTime * twinkle + rnd * 40.0);
+      star *= blink;
+
+      return star * step(threshold, rnd);
+    }
+
+    vec3 spectral(float x) {
+      vec3 cyan = vec3(0.08, 0.92, 1.0);
+      vec3 blue = vec3(0.08, 0.28, 1.0);
+      vec3 violet = vec3(0.72, 0.22, 1.0);
+      vec3 ember = vec3(1.0, 0.38, 0.08);
+      vec3 white = vec3(1.0, 0.88, 0.68);
+
+      vec3 a = mix(cyan, blue, smoothstep(0.0, 0.35, x));
+      vec3 b = mix(violet, ember, smoothstep(0.35, 0.88, x));
+      vec3 c = mix(a, b, smoothstep(0.18, 0.82, x));
+
+      return mix(c, white, smoothstep(0.86, 1.0, x) * 0.45);
+    }
+
+    float ring(vec2 p, float radius, float thickness) {
+      return smoothstep(thickness, 0.0, abs(length(p) - radius));
+    }
+
+    float beam(vec2 p, float width) {
+      return exp(-abs(p.x) * width);
+    }
+
+    void main() {
+      vec2 frag = gl_FragCoord.xy;
+      vec2 uv = (frag - 0.5 * uResolution.xy) / uResolution.y;
+      vec2 rawUv = uv;
+
+      vec2 pointer = (uPointer - 0.5 * uResolution.xy) / uResolution.y;
+      vec2 velocity = uVelocity / max(uResolution.y, 1.0);
+
+      float t = uTime;
+      float breath = uBreath;
+      float pulse = uPulse;
+
+      vec2 p = uv;
+
+      float pointerDistance = length(p - pointer);
+      float pointerInfluence = exp(-pointerDistance * 2.6);
+      float gravityStrength = 0.18 + uDown * 1.35 + pulse * 0.8;
+
+      vec2 toPointer = pointer - p;
+      p += normalize(toPointer + 0.0001) * (gravityStrength * 0.028 / (pointerDistance + 0.08));
+      p += velocity * 0.35 * pointerInfluence;
+
+      float radius = length(p);
+      float angle = atan(p.y, p.x);
+
+      float lens = 0.26 / (radius + 0.095);
+      angle += lens * (0.7 + uDown * 0.45);
+      angle += t * 0.12;
+
+      vec2 warped = vec2(cos(angle), sin(angle)) * radius;
+      warped.x *= 1.72;
+      warped *= rotate2d(t * 0.055);
+
+      float diskRadius = 0.34 + 0.025 * sin(t * 0.7) + pulse * 0.03;
+      float accretion = exp(-abs(radius - diskRadius) * 11.0);
+      float ringTexture = fbm(vec3(warped * 4.6, t * 0.18));
+      float fineTexture = fbm(vec3(warped * 13.0 + 4.0, t * 0.42));
+      float filament = pow(max(0.0, ringTexture), 2.15);
+      float plasma = accretion * filament;
+      plasma *= 1.0 + 0.45 * sin(angle * 7.0 + t * 3.7);
+      plasma += accretion * pow(fineTexture, 7.0) * 0.8;
+
+      float core = smoothstep(0.19 + pulse * 0.01, 0.045, radius);
+      float horizon = smoothstep(0.23, 0.17, radius) * smoothstep(0.055, 0.12, radius);
+      float lensGlow = exp(-radius * 3.2) * 0.34;
+
+      vec2 jetSpace = p;
+      jetSpace *= rotate2d(0.06 * sin(t * 0.2));
+      float jet = beam(jetSpace, 25.0);
+      jet *= smoothstep(0.18, 0.02, abs(jetSpace.y));
+      jet *= 0.25 + 0.75 * fbm(vec3(jetSpace * 7.0, t * 0.35 + 3.0));
+      jet *= 0.45 + pulse * 0.8;
+
+      float nebulaA = fbm(vec3(rawUv * 2.1 + vec2(0.0, t * 0.025), t * 0.08));
+      float nebulaB = fbm(vec3(rawUv * 4.0 * rotate2d(t * 0.02), t * 0.05 + 8.0));
+      float nebula = pow(nebulaA, 2.2) * 0.75 + pow(nebulaB, 4.0) * 0.55;
+      nebula *= smoothstep(1.38, 0.02, length(rawUv));
+      nebula *= 0.68 + breath * 0.18;
+
+      float stars = 0.0;
+      stars += starLayer(rawUv + vec2(t * 0.002, 0.0), 92.0, 0.985, 2.1);
+      stars += starLayer(rawUv * rotate2d(0.3) - vec2(0.0, t * 0.002), 154.0, 0.991, 3.5) * 0.55;
+      stars += starLayer(rawUv * rotate2d(-0.4) + vec2(sin(t) * 0.003), 245.0, 0.995, 5.0) * 0.32;
+
+      float orbital1 = ring(p, 0.56 + 0.02 * sin(t * 0.45), 0.005);
+      orbital1 *= 0.4 + 0.6 * sin(angle * 16.0 - t * 1.4);
+      orbital1 *= smoothstep(0.2, 0.95, radius);
+
+      float orbital2 = ring(p * rotate2d(1.1), 0.79 + 0.03 * cos(t * 0.33), 0.004);
+      orbital2 *= 0.4 + 0.6 * sin(angle * 22.0 + t * 1.1);
+      orbital2 *= smoothstep(0.35, 1.1, radius);
+
+      float shock = ring(p, 0.34 + pulse * 0.92, 0.018 + pulse * 0.02);
+      shock *= pulse;
+
+      vec3 deep = vec3(0.004, 0.007, 0.020);
+      vec3 cyan = vec3(0.05, 0.95, 1.0);
+      vec3 blue = vec3(0.05, 0.18, 0.80);
+      vec3 violet = vec3(0.65, 0.18, 1.0);
+      vec3 amber = vec3(1.00, 0.40, 0.08);
+      vec3 white = vec3(1.0, 0.88, 0.68);
+
+      vec3 color = deep;
+
+      color += nebula * vec3(0.025, 0.11, 0.25);
+      color += stars * vec3(0.72, 0.90, 1.25);
+
+      float heat = smoothstep(0.0, 1.0, filament + fineTexture * 0.6);
+      color += plasma * spectral(heat) * (2.1 + pulse * 0.9);
+
+      color += horizon * white * (1.4 + pulse);
+      color += lensGlow * mix(blue, cyan, 0.65);
+      color += jet * mix(cyan, violet, smoothstep(-0.65, 0.65, p.y)) * 1.5;
+      color += orbital1 * cyan * 0.28;
+      color += orbital2 * violet * 0.2;
+      color += shock * mix(cyan, amber, pulse) * 2.0;
+
+      color *= 1.0 - core * 0.96;
+
+      float chroma = 0.006 + pulse * 0.003 + uDown * 0.003;
+      vec2 ca = normalize(rawUv + 0.0001) * chroma;
+      float edgeGlow = exp(-length(rawUv) * 1.8) * 0.08;
+      color.r += edgeGlow + plasma * 0.12;
+      color.b += edgeGlow * 1.8 + jet * 0.08;
+
+      float vignette = smoothstep(1.25, 0.2, length(rawUv));
+      color *= 0.72 + vignette * 0.45;
+
+      color = 1.0 - exp(-color * 1.35);
+      color = pow(color, vec3(0.82));
+
+      float grain = hash21(frag + fract(t) * 100.0) * 0.035;
+      color += grain;
+
+      gl_FragColor = vec4(color, 1.0);
+    }
+  `;
+
+  function createShader(type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader) || "Shader compilation failed.";
+      gl.deleteShader(shader);
+      throw new Error(message);
+    }
+
+    return shader;
+  }
+
+  function createProgram(vertex, fragment) {
+    const program = gl.createProgram();
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      const message = gl.getProgramInfoLog(program) || "Program link failed.";
+      gl.deleteProgram(program);
+      throw new Error(message);
+    }
+
+    return program;
+  }
+
+  let program;
+
+  try {
+    const vertexShader = createShader(gl.VERTEX_SHADER, vertexSource);
+    const fragmentShader = createShader(gl.FRAGMENT_SHADER, fragmentSource);
+    program = createProgram(vertexShader, fragmentShader);
+  } catch (err) {
+    fail(err.message);
+    return;
+  }
+
+  gl.useProgram(program);
+
+  const buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array([
+      -1, -1,
+       1, -1,
+      -1,  1,
+       1,  1
+    ]),
+    gl.STATIC_DRAW
+  );
+
+  const positionLocation = gl.getAttribLocation(program, "aPosition");
+  gl.enableVertexAttribArray(positionLocation);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+  const uniforms = {
+    resolution: gl.getUniformLocation(program, "uResolution"),
+    pointer: gl.getUniformLocation(program, "uPointer"),
+    velocity: gl.getUniformLocation(program, "uVelocity"),
+    time: gl.getUniformLocation(program, "uTime"),
+    down: gl.getUniformLocation(program, "uDown"),
+    pulse: gl.getUniformLocation(program, "uPulse"),
+    quality: gl.getUniformLocation(program, "uQuality"),
+    aspect: gl.getUniformLocation(program, "uAspect"),
+    breath: gl.getUniformLocation(program, "uBreath")
+  };
+
+  const state = {
+    width: 1,
+    height: 1,
+    dpr: 1,
+    quality: 1,
+    pointerX: 0,
+    pointerY: 0,
+    targetPointerX: 0,
+    targetPointerY: 0,
+    velocityX: 0,
+    velocityY: 0,
+    lastPointerX: 0,
+    lastPointerY: 0,
+    down: 0,
+    pulse: 0,
+    pulseTarget: 0,
+    booted: false,
+    lastTime: performance.now(),
+    fpsTime: performance.now(),
+    fpsFrames: 0,
+    fps: 60,
+    coherence: 82,
+    gravity: 0.42,
+    entropy: 18
+  };
+
+  function chooseDpr() {
+    const base = window.devicePixelRatio || 1;
+    const mobile = Math.min(window.innerWidth, window.innerHeight) < 760;
+    const cap = mobile ? 1.45 : 1.85;
+    return Math.min(base, cap) * state.quality;
+  }
+
+  function resize() {
+    state.dpr = chooseDpr();
+    state.width = Math.max(1, Math.floor(window.innerWidth * state.dpr));
+    state.height = Math.max(1, Math.floor(window.innerHeight * state.dpr));
+
+    canvas.width = state.width;
+    canvas.height = state.height;
+
+    gl.viewport(0, 0, state.width, state.height);
+
+    if (!state.booted) {
+      state.pointerX = state.width * 0.5;
+      state.pointerY = state.height * 0.5;
+      state.targetPointerX = state.pointerX;
+      state.targetPointerY = state.pointerY;
+    }
+  }
+
+  function setPointer(clientX, clientY) {
+    state.targetPointerX = clientX * state.dpr;
+    state.targetPointerY = (window.innerHeight - clientY) * state.dpr;
+  }
+
+  function onPointerMove(event) {
+    setPointer(event.clientX, event.clientY);
+  }
+
+  function onPointerDown(event) {
+    state.down = 1;
+    state.pulseTarget = 1;
+    setPointer(event.clientX, event.clientY);
+  }
+
+  function onPointerUp() {
+    state.down = 0;
+  }
+
+  function onTouchMove(event) {
+    const touch = event.touches && event.touches[0];
+    if (!touch) return;
+    setPointer(touch.clientX, touch.clientY);
+    event.preventDefault();
+  }
+
+  function onTouchStart(event) {
+    const touch = event.touches && event.touches[0];
+    if (!touch) return;
+    state.down = 1;
+    state.pulseTarget = 1;
+    setPointer(touch.clientX, touch.clientY);
+    event.preventDefault();
+  }
+
+  function onTouchEnd() {
+    state.down = 0;
+  }
+
+  window.addEventListener("resize", resize, { passive: true });
+  window.addEventListener("pointermove", onPointerMove, { passive: true });
+  window.addEventListener("pointerdown", onPointerDown, { passive: true });
+  window.addEventListener("pointerup", onPointerUp, { passive: true });
+  window.addEventListener("pointercancel", onPointerUp, { passive: true });
+  window.addEventListener("touchmove", onTouchMove, { passive: false });
+  window.addEventListener("touchstart", onTouchStart, { passive: false });
+  window.addEventListener("touchend", onTouchEnd, { passive: true });
+  window.addEventListener("touchcancel", onTouchEnd, { passive: true });
+
+  pulseBtn.addEventListener("click", () => {
+    state.pulseTarget = 1.4;
+    state.down = 1;
+    setTimeout(() => {
+      state.down = 0;
+    }, 170);
+  });
+
+  resetBtn.addEventListener("click", () => {
+    state.targetPointerX = state.width * 0.5;
+    state.targetPointerY = state.height * 0.5;
+    state.pulseTarget = 0.8;
+  });
+
+  qualityBtn.addEventListener("click", () => {
+    if (state.quality === 1) {
+      state.quality = 0.78;
+      qualityBtn.textContent = "Boost";
+    } else {
+      state.quality = 1;
+      qualityBtn.textContent = "Quality";
+    }
+
+    resize();
+  });
+
+  function updateHud(time, dt) {
+    const speed = Math.hypot(state.velocityX, state.velocityY) / Math.max(state.height, 1);
+    const downBoost = state.down * 26;
+    const pulseBoost = state.pulse * 20;
+
+    state.coherence =
+      72 +
+      Math.sin(time * 0.0008) * 8 -
+      Math.min(18, speed * 22) +
+      state.down * 4;
+
+    state.gravity =
+      0.34 +
+      state.down * 0.42 +
+      state.pulse * 0.22 +
+      Math.sin(time * 0.001) * 0.04;
+
+    state.entropy =
+      16 +
+      Math.min(42, speed * 60) +
+      pulseBoost +
+      Math.sin(time * 0.0014 + 2) * 5;
+
+    const coherence = Math.max(0, Math.min(100, state.coherence));
+    const gravity = Math.max(0, Math.min(100, state.gravity * 100));
+    const entropy = Math.max(0, Math.min(100, state.entropy));
+
+    coherenceEl.textContent = `${Math.round(coherence)}`;
+    gravityEl.textContent = `${state.gravity.toFixed(2)}`;
+    entropyEl.textContent = `${Math.round(entropy)}`;
+
+    coherenceBar.style.setProperty("--v", `${coherence}%`);
+    gravityBar.style.setProperty("--v", `${gravity}%`);
+    entropyBar.style.setProperty("--v", `${entropy}%`);
+
+    needleEl.style.setProperty(
+      "--a",
+      `${Math.atan2(
+        state.pointerY - state.height * 0.5,
+        state.pointerX - state.width * 0.5
+      ) * 180 / Math.PI + 90}deg`
+    );
+
+    signalBars.forEach((bar, index) => {
+      const wave =
+        Math.sin(time * 0.003 + index * 0.7) * 0.5 +
+        Math.sin(time * 0.0017 + index * 1.8) * 0.5;
+
+      const reactive = state.down * Math.sin(index * 1.9 + time * 0.02);
+      const h = 8 + Math.abs(wave + reactive) * 28 + state.pulse * 18;
+      bar.style.height = `${h}px`;
+      bar.style.opacity = `${0.45 + Math.min(0.5, h / 70)}`;
+    });
+
+    state.fpsFrames++;
+    if (time - state.fpsTime > 400) {
+      state.fps = Math.round((state.fpsFrames * 1000) / (time - state.fpsTime));
+      fpsEl.textContent = `${state.fps} FPS`;
+      state.fpsFrames = 0;
+      state.fpsTime = time;
+    }
+  }
+
+  function render(now) {
+    const dt = Math.min(0.05, (now - state.lastTime) / 1000);
+    state.lastTime = now;
+
+    state.pointerX += (state.targetPointerX - state.pointerX) * 0.11;
+    state.pointerY += (state.targetPointerY - state.pointerY) * 0.11;
+
+    state.velocityX = state.pointerX - state.lastPointerX;
+    state.velocityY = state.pointerY - state.lastPointerY;
+
+    state.lastPointerX = state.pointerX;
+    state.lastPointerY = state.pointerY;
+
+    state.pulse += (state.pulseTarget - state.pulse) * 0.12;
+    state.pulseTarget *= 0.9;
+    state.pulse *= 0.965;
+
+    const breath = 0.5 + 0.5 * Math.sin(now * 0.0012);
+
+    gl.uniform2f(uniforms.resolution, state.width, state.height);
+    gl.uniform2f(uniforms.pointer, state.pointerX, state.pointerY);
+    gl.uniform2f(uniforms.velocity, state.velocityX, state.velocityY);
+    gl.uniform1f(uniforms.time, now * 0.001);
+    gl.uniform1f(uniforms.down, state.down);
+    gl.uniform1f(uniforms.pulse, state.pulse);
+    gl.uniform1f(uniforms.quality, state.quality);
+    gl.uniform1f(uniforms.aspect, state.width / Math.max(state.height, 1));
+    gl.uniform1f(uniforms.breath, breath);
+
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    updateHud(now, dt);
+
+    requestAnimationFrame(render);
+  }
+
+  resize();
+
+  setTimeout(() => {
+    boot.classList.add("done");
+    state.booted = true;
+  }, 1250);
+
+  requestAnimationFrame(render);
+})();
 </script>
 </body>
 </html>
