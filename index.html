@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>ORACLE / Singularity Engine — Pass 1</title>
+<title>ORACLE / Singularity Engine — Pass 2</title>
 
 <style>
 :root {
@@ -38,14 +38,7 @@ body {
   overflow: hidden;
   background: var(--bg);
   color: var(--text);
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 body {
@@ -63,6 +56,11 @@ canvas {
   background: radial-gradient(circle at center, #08111f, #02030a 70%);
 }
 
+#particle-canvas {
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
 .app {
   position: fixed;
   inset: 0;
@@ -74,8 +72,8 @@ canvas {
   position: fixed;
   inset: 0;
   background:
-    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.08) 35%, rgba(0,0,0,.62) 100%),
-    linear-gradient(to bottom, rgba(0,0,0,.12), transparent 30%, rgba(0,0,0,.34));
+    radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.08) 35%, rgba(0,0,0,.64) 100%),
+    linear-gradient(to bottom, rgba(0,0,0,.12), transparent 30%, rgba(0,0,0,.35));
   pointer-events: none;
   mix-blend-mode: multiply;
 }
@@ -83,7 +81,7 @@ canvas {
 .scanlines {
   position: fixed;
   inset: 0;
-  opacity: 0.09;
+  opacity: 0.08;
   background:
     repeating-linear-gradient(
       to bottom,
@@ -120,7 +118,7 @@ canvas {
   position: fixed;
   left: max(16px, env(safe-area-inset-left));
   top: max(16px, env(safe-area-inset-top));
-  width: min(390px, calc(100vw - 32px));
+  width: min(410px, calc(100vw - 32px));
   padding: 16px;
   border: 1px solid var(--line);
   background:
@@ -159,7 +157,7 @@ h1 {
 
 .sub {
   margin: 10px 0 0;
-  max-width: 300px;
+  max-width: 315px;
   color: var(--muted);
   font-size: 13px;
   line-height: 1.45;
@@ -251,6 +249,33 @@ h1 {
   box-shadow: 0 0 18px rgba(96,240,255,.3);
 }
 
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  margin-top: 13px;
+}
+
+.mode {
+  border-radius: 13px;
+  padding: 9px 6px;
+  border: 1px solid rgba(255,255,255,.09);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.mode.active {
+  color: var(--text);
+  border-color: rgba(96,240,255,.36);
+  background: linear-gradient(135deg, rgba(96,240,255,.14), rgba(168,92,255,.10));
+  box-shadow: 0 0 28px rgba(96,240,255,.08);
+}
+
 .control-row {
   display: flex;
   gap: 9px;
@@ -288,14 +313,15 @@ button.primary {
   right: max(16px, env(safe-area-inset-right));
   bottom: max(16px, env(safe-area-inset-bottom));
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(280px, 520px) 1fr auto;
   align-items: end;
   gap: 14px;
   pointer-events: none;
 }
 
-.readout {
-  max-width: 520px;
+.readout,
+.log-panel,
+.radar-panel {
   padding: 14px 16px;
   border-radius: 20px;
   border: 1px solid var(--line);
@@ -305,20 +331,23 @@ button.primary {
   box-shadow: var(--shadow);
 }
 
-.readout-title {
+.readout-title,
+.log-title {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.readout-title strong {
+.readout-title strong,
+.log-title strong {
   font-size: 11px;
   letter-spacing: .18em;
   text-transform: uppercase;
 }
 
-.readout-title span {
+.readout-title span,
+.log-title span {
   color: var(--cyan);
   font-size: 11px;
   font-variant-numeric: tabular-nums;
@@ -342,45 +371,84 @@ button.primary {
   transform-origin: bottom;
 }
 
-.orbital-compass {
+.log-panel {
+  min-width: 240px;
+  max-width: 420px;
+}
+
+.log {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+.log li {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.log li::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 99px;
+  background: var(--cyan);
+  box-shadow: 0 0 14px rgba(96,240,255,.8);
+  flex: 0 0 auto;
+  transform: translateY(-1px);
+}
+
+.log b {
+  color: var(--text);
+  font-weight: 800;
+}
+
+.radar-panel {
+  width: 132px;
+  height: 132px;
+  padding: 7px;
+  display: grid;
+  place-items: center;
+}
+
+.radar {
   width: 118px;
   height: 118px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,.16);
   background:
     radial-gradient(circle, transparent 0 28%, rgba(255,255,255,.05) 29% 30%, transparent 31% 100%),
+    radial-gradient(circle, transparent 0 55%, rgba(255,255,255,.05) 56% 57%, transparent 58% 100%),
     conic-gradient(from 0deg, rgba(96,240,255,.18), transparent, rgba(168,92,255,.18), transparent, rgba(96,240,255,.18));
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 20px 70px rgba(0,0,0,.4);
 }
 
-.orbital-compass::before,
-.orbital-compass::after {
+.radar::before {
   content: "";
   position: absolute;
-  inset: 18px;
+  inset: 0;
+  background: conic-gradient(from var(--radar, 0deg), rgba(96,240,255,.34), transparent 22%, transparent);
   border-radius: inherit;
-  border: 1px solid rgba(255,255,255,.12);
 }
 
-.orbital-compass::after {
-  inset: 43px;
-  background: rgba(96,240,255,.65);
-  box-shadow: 0 0 24px rgba(96,240,255,.8);
-}
-
-.needle {
+.radar::after {
+  content: "";
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 1px;
-  height: 48%;
-  transform-origin: 50% 0%;
-  transform: rotate(var(--a, 0deg));
-  background: linear-gradient(to bottom, rgba(255,255,255,.95), transparent);
+  left: var(--rx, 50%);
+  top: var(--ry, 50%);
+  width: 8px;
+  height: 8px;
+  margin: -4px;
+  border-radius: 99px;
+  background: var(--cyan);
+  box-shadow: 0 0 20px rgba(96,240,255,.9);
 }
 
 .boot {
@@ -476,20 +544,26 @@ button.primary {
   line-height: 1.5;
 }
 
+@media (max-width: 920px) {
+  .lower-panel {
+    grid-template-columns: 1fr auto;
+  }
+
+  .log-panel {
+    display: none;
+  }
+}
+
 @media (max-width: 720px) {
   .hud {
     padding: 14px;
-  }
-
-  .metrics {
-    grid-template-columns: repeat(3, 1fr);
   }
 
   .lower-panel {
     grid-template-columns: 1fr;
   }
 
-  .orbital-compass {
+  .radar-panel {
     display: none;
   }
 
@@ -511,12 +585,18 @@ button.primary {
     padding: 10px;
     font-size: 10px;
   }
+
+  .mode {
+    font-size: 8px;
+    padding: 8px 4px;
+  }
 }
 </style>
 </head>
 
 <body>
 <canvas id="oracle-canvas"></canvas>
+<canvas id="particle-canvas"></canvas>
 
 <div class="app">
   <div class="vignette"></div>
@@ -526,9 +606,9 @@ button.primary {
   <section class="hud">
     <div class="hud-top">
       <div>
-        <p class="brand-kicker">ORACLE ENGINE / PASS 1</p>
-        <h1>Singularity Field</h1>
-        <p class="sub">A touch-reactive WebGL black-hole nebula. Drag to bend the field. Hold to collapse gravity.</p>
+        <p class="brand-kicker">ORACLE ENGINE / PASS 2</p>
+        <h1>Living Singularity</h1>
+        <p class="sub">The visual core now has particles, state modes, touch gravity, orbital motion and system telemetry.</p>
       </div>
       <div class="status-pill">
         <i class="status-dot"></i>
@@ -557,6 +637,13 @@ button.primary {
       </div>
     </div>
 
+    <div class="mode-grid">
+      <div class="mode active" data-mode="calm">Calm</div>
+      <div class="mode" data-mode="storm">Storm</div>
+      <div class="mode" data-mode="collapse">Collapse</div>
+      <div class="mode" data-mode="bloom">Bloom</div>
+    </div>
+
     <div class="control-row">
       <button class="primary" id="pulseBtn">Pulse</button>
       <button id="resetBtn">Recenter</button>
@@ -573,16 +660,24 @@ button.primary {
       <div class="signal" id="signal"></div>
     </div>
 
-    <div class="orbital-compass">
-      <i class="needle" id="needle"></i>
+    <div class="log-panel">
+      <div class="log-title">
+        <strong>Event Stream</strong>
+        <span id="eventMode">CALM</span>
+      </div>
+      <ul class="log" id="log"></ul>
+    </div>
+
+    <div class="radar-panel">
+      <div class="radar" id="radar"></div>
     </div>
   </section>
 </div>
 
 <div class="boot" id="boot">
   <div class="boot-card">
-    <p>Initialising visual core</p>
-    <h2>ORACLE is waking</h2>
+    <p>Initialising living layer</p>
+    <h2>ORACLE is evolving</h2>
     <div class="boot-line"><i></i></div>
   </div>
 </div>
@@ -599,6 +694,9 @@ button.primary {
   "use strict";
 
   const canvas = document.getElementById("oracle-canvas");
+  const particleCanvas = document.getElementById("particle-canvas");
+  const particleCtx = particleCanvas.getContext("2d", { alpha: true });
+
   const boot = document.getElementById("boot");
   const error = document.getElementById("error");
   const errorText = document.getElementById("errorText");
@@ -617,7 +715,10 @@ button.primary {
 
   const fpsEl = document.getElementById("fps");
   const signalEl = document.getElementById("signal");
-  const needleEl = document.getElementById("needle");
+  const radarEl = document.getElementById("radar");
+  const logEl = document.getElementById("log");
+  const eventModeEl = document.getElementById("eventMode");
+  const modeEls = Array.from(document.querySelectorAll(".mode"));
 
   const signalBars = [];
   for (let i = 0; i < 22; i++) {
@@ -674,6 +775,8 @@ button.primary {
     uniform float uQuality;
     uniform float uAspect;
     uniform float uBreath;
+    uniform float uMode;
+    uniform float uModeMix;
 
     #define PI 3.141592653589793
     #define TAU 6.283185307179586
@@ -735,10 +838,6 @@ button.primary {
       return v;
     }
 
-    float ridge(float x) {
-      return 1.0 - abs(2.0 * x - 1.0);
-    }
-
     float starLayer(vec2 uv, float scale, float threshold, float twinkle) {
       vec2 grid = uv * scale;
       vec2 id = floor(grid);
@@ -754,18 +853,24 @@ button.primary {
       return star * step(threshold, rnd);
     }
 
-    vec3 spectral(float x) {
+    vec3 spectral(float x, float mode) {
       vec3 cyan = vec3(0.08, 0.92, 1.0);
       vec3 blue = vec3(0.08, 0.28, 1.0);
       vec3 violet = vec3(0.72, 0.22, 1.0);
       vec3 ember = vec3(1.0, 0.38, 0.08);
+      vec3 green = vec3(0.18, 1.0, 0.65);
       vec3 white = vec3(1.0, 0.88, 0.68);
 
-      vec3 a = mix(cyan, blue, smoothstep(0.0, 0.35, x));
-      vec3 b = mix(violet, ember, smoothstep(0.35, 0.88, x));
-      vec3 c = mix(a, b, smoothstep(0.18, 0.82, x));
+      vec3 calm = mix(cyan, violet, smoothstep(0.05, 0.85, x));
+      vec3 storm = mix(blue, ember, smoothstep(0.05, 0.9, x));
+      vec3 collapse = mix(violet * 0.65, white, smoothstep(0.55, 1.0, x));
+      vec3 bloom = mix(green, cyan + white * 0.35, smoothstep(0.12, 1.0, x));
 
-      return mix(c, white, smoothstep(0.86, 1.0, x) * 0.45);
+      vec3 a = mix(calm, storm, smoothstep(0.3, 1.2, mode));
+      vec3 b = mix(collapse, bloom, smoothstep(2.3, 3.2, mode));
+      vec3 c = mix(a, b, smoothstep(1.4, 2.6, mode));
+
+      return mix(c, white, smoothstep(0.88, 1.0, x) * 0.32);
     }
 
     float ring(vec2 p, float radius, float thickness) {
@@ -787,12 +892,17 @@ button.primary {
       float t = uTime;
       float breath = uBreath;
       float pulse = uPulse;
+      float mode = uMode;
+
+      float storm = smoothstep(0.3, 1.1, mode) * (1.0 - smoothstep(1.2, 1.8, mode));
+      float collapse = smoothstep(1.3, 2.1, mode) * (1.0 - smoothstep(2.2, 2.8, mode));
+      float bloom = smoothstep(2.3, 3.1, mode);
 
       vec2 p = uv;
 
       float pointerDistance = length(p - pointer);
       float pointerInfluence = exp(-pointerDistance * 2.6);
-      float gravityStrength = 0.18 + uDown * 1.35 + pulse * 0.8;
+      float gravityStrength = 0.18 + uDown * 1.35 + pulse * 0.8 + collapse * 0.92 - bloom * 0.08;
 
       vec2 toPointer = pointer - p;
       p += normalize(toPointer + 0.0001) * (gravityStrength * 0.028 / (pointerDistance + 0.08));
@@ -801,39 +911,39 @@ button.primary {
       float radius = length(p);
       float angle = atan(p.y, p.x);
 
-      float lens = 0.26 / (radius + 0.095);
-      angle += lens * (0.7 + uDown * 0.45);
-      angle += t * 0.12;
+      float lens = (0.26 + collapse * 0.12) / (radius + 0.095);
+      angle += lens * (0.7 + uDown * 0.45 + storm * 0.3);
+      angle += t * (0.12 + storm * 0.12 - bloom * 0.03);
 
       vec2 warped = vec2(cos(angle), sin(angle)) * radius;
-      warped.x *= 1.72;
-      warped *= rotate2d(t * 0.055);
+      warped.x *= 1.72 - bloom * 0.18;
+      warped *= rotate2d(t * (0.055 + storm * 0.04));
 
-      float diskRadius = 0.34 + 0.025 * sin(t * 0.7) + pulse * 0.03;
-      float accretion = exp(-abs(radius - diskRadius) * 11.0);
-      float ringTexture = fbm(vec3(warped * 4.6, t * 0.18));
-      float fineTexture = fbm(vec3(warped * 13.0 + 4.0, t * 0.42));
+      float diskRadius = 0.34 + 0.025 * sin(t * 0.7) + pulse * 0.03 + bloom * 0.05 - collapse * 0.06;
+      float accretion = exp(-abs(radius - diskRadius) * (11.0 + collapse * 8.0));
+      float ringTexture = fbm(vec3(warped * (4.6 + storm * 1.6), t * (0.18 + storm * 0.12)));
+      float fineTexture = fbm(vec3(warped * (13.0 + storm * 5.0) + 4.0, t * (0.42 + storm * 0.25)));
       float filament = pow(max(0.0, ringTexture), 2.15);
       float plasma = accretion * filament;
-      plasma *= 1.0 + 0.45 * sin(angle * 7.0 + t * 3.7);
-      plasma += accretion * pow(fineTexture, 7.0) * 0.8;
+      plasma *= 1.0 + 0.45 * sin(angle * (7.0 + storm * 5.0) + t * (3.7 + storm * 2.0));
+      plasma += accretion * pow(fineTexture, 7.0) * (0.8 + storm * 0.7);
 
-      float core = smoothstep(0.19 + pulse * 0.01, 0.045, radius);
-      float horizon = smoothstep(0.23, 0.17, radius) * smoothstep(0.055, 0.12, radius);
-      float lensGlow = exp(-radius * 3.2) * 0.34;
+      float core = smoothstep(0.19 + pulse * 0.01 + collapse * 0.035, 0.045, radius);
+      float horizon = smoothstep(0.23 + collapse * 0.04, 0.17, radius) * smoothstep(0.055, 0.12 + collapse * 0.02, radius);
+      float lensGlow = exp(-radius * (3.2 - bloom * 0.55)) * (0.34 + bloom * 0.12);
 
       vec2 jetSpace = p;
       jetSpace *= rotate2d(0.06 * sin(t * 0.2));
-      float jet = beam(jetSpace, 25.0);
-      jet *= smoothstep(0.18, 0.02, abs(jetSpace.y));
+      float jet = beam(jetSpace, 25.0 - bloom * 8.0);
+      jet *= smoothstep(0.18 + bloom * 0.12, 0.02, abs(jetSpace.y));
       jet *= 0.25 + 0.75 * fbm(vec3(jetSpace * 7.0, t * 0.35 + 3.0));
-      jet *= 0.45 + pulse * 0.8;
+      jet *= 0.45 + pulse * 0.8 + storm * 0.4;
 
-      float nebulaA = fbm(vec3(rawUv * 2.1 + vec2(0.0, t * 0.025), t * 0.08));
-      float nebulaB = fbm(vec3(rawUv * 4.0 * rotate2d(t * 0.02), t * 0.05 + 8.0));
+      float nebulaA = fbm(vec3(rawUv * (2.1 + bloom * 0.5) + vec2(0.0, t * 0.025), t * 0.08));
+      float nebulaB = fbm(vec3(rawUv * (4.0 + storm * 1.0) * rotate2d(t * 0.02), t * 0.05 + 8.0));
       float nebula = pow(nebulaA, 2.2) * 0.75 + pow(nebulaB, 4.0) * 0.55;
-      nebula *= smoothstep(1.38, 0.02, length(rawUv));
-      nebula *= 0.68 + breath * 0.18;
+      nebula *= smoothstep(1.38 + bloom * 0.2, 0.02, length(rawUv));
+      nebula *= 0.68 + breath * 0.18 + bloom * 0.22;
 
       float stars = 0.0;
       stars += starLayer(rawUv + vec2(t * 0.002, 0.0), 92.0, 0.985, 2.1);
@@ -841,11 +951,11 @@ button.primary {
       stars += starLayer(rawUv * rotate2d(-0.4) + vec2(sin(t) * 0.003), 245.0, 0.995, 5.0) * 0.32;
 
       float orbital1 = ring(p, 0.56 + 0.02 * sin(t * 0.45), 0.005);
-      orbital1 *= 0.4 + 0.6 * sin(angle * 16.0 - t * 1.4);
+      orbital1 *= 0.4 + 0.6 * sin(angle * 16.0 - t * (1.4 + storm));
       orbital1 *= smoothstep(0.2, 0.95, radius);
 
       float orbital2 = ring(p * rotate2d(1.1), 0.79 + 0.03 * cos(t * 0.33), 0.004);
-      orbital2 *= 0.4 + 0.6 * sin(angle * 22.0 + t * 1.1);
+      orbital2 *= 0.4 + 0.6 * sin(angle * 22.0 + t * (1.1 + storm));
       orbital2 *= smoothstep(0.35, 1.1, radius);
 
       float shock = ring(p, 0.34 + pulse * 0.92, 0.018 + pulse * 0.02);
@@ -856,27 +966,25 @@ button.primary {
       vec3 blue = vec3(0.05, 0.18, 0.80);
       vec3 violet = vec3(0.65, 0.18, 1.0);
       vec3 amber = vec3(1.00, 0.40, 0.08);
+      vec3 green = vec3(0.18, 1.0, 0.65);
       vec3 white = vec3(1.0, 0.88, 0.68);
 
       vec3 color = deep;
-
-      color += nebula * vec3(0.025, 0.11, 0.25);
+      color += nebula * mix(vec3(0.025, 0.11, 0.25), vec3(0.05, 0.22, 0.18), bloom);
       color += stars * vec3(0.72, 0.90, 1.25);
 
       float heat = smoothstep(0.0, 1.0, filament + fineTexture * 0.6);
-      color += plasma * spectral(heat) * (2.1 + pulse * 0.9);
+      color += plasma * spectral(heat, mode) * (2.1 + pulse * 0.9 + storm * 0.8);
 
-      color += horizon * white * (1.4 + pulse);
+      color += horizon * white * (1.4 + pulse + collapse * 1.5);
       color += lensGlow * mix(blue, cyan, 0.65);
-      color += jet * mix(cyan, violet, smoothstep(-0.65, 0.65, p.y)) * 1.5;
-      color += orbital1 * cyan * 0.28;
+      color += jet * mix(cyan, violet, smoothstep(-0.65, 0.65, p.y)) * (1.5 + storm * 0.55);
+      color += orbital1 * mix(cyan, green, bloom) * 0.28;
       color += orbital2 * violet * 0.2;
       color += shock * mix(cyan, amber, pulse) * 2.0;
 
-      color *= 1.0 - core * 0.96;
+      color *= 1.0 - core * (0.96 - bloom * 0.1);
 
-      float chroma = 0.006 + pulse * 0.003 + uDown * 0.003;
-      vec2 ca = normalize(rawUv + 0.0001) * chroma;
       float edgeGlow = exp(-length(rawUv) * 1.8) * 0.08;
       color.r += edgeGlow + plasma * 0.12;
       color.b += edgeGlow * 1.8 + jet * 0.08;
@@ -884,7 +992,7 @@ button.primary {
       float vignette = smoothstep(1.25, 0.2, length(rawUv));
       color *= 0.72 + vignette * 0.45;
 
-      color = 1.0 - exp(-color * 1.35);
+      color = 1.0 - exp(-color * (1.35 + storm * 0.22));
       color = pow(color, vec3(0.82));
 
       float grain = hash21(frag + fract(t) * 100.0) * 0.035;
@@ -962,12 +1070,23 @@ button.primary {
     pulse: gl.getUniformLocation(program, "uPulse"),
     quality: gl.getUniformLocation(program, "uQuality"),
     aspect: gl.getUniformLocation(program, "uAspect"),
-    breath: gl.getUniformLocation(program, "uBreath")
+    breath: gl.getUniformLocation(program, "uBreath"),
+    mode: gl.getUniformLocation(program, "uMode"),
+    modeMix: gl.getUniformLocation(program, "uModeMix")
+  };
+
+  const modes = {
+    calm: 0,
+    storm: 1,
+    collapse: 2,
+    bloom: 3
   };
 
   const state = {
     width: 1,
     height: 1,
+    cssWidth: 1,
+    cssHeight: 1,
     dpr: 1,
     quality: 1,
     pointerX: 0,
@@ -988,8 +1107,31 @@ button.primary {
     fps: 60,
     coherence: 82,
     gravity: 0.42,
-    entropy: 18
+    entropy: 18,
+    mode: "calm",
+    modeValue: 0,
+    targetModeValue: 0,
+    modeMix: 0,
+    particleCount: 0,
+    maxParticles: 480,
+    particleScale: 1
   };
+
+  const particles = [];
+
+  function rand(min, max) {
+    return min + Math.random() * (max - min);
+  }
+
+  function addLog(label, detail) {
+    const li = document.createElement("li");
+    li.innerHTML = `<b>${label}</b> ${detail}`;
+    logEl.prepend(li);
+
+    while (logEl.children.length > 4) {
+      logEl.lastElementChild.remove();
+    }
+  }
 
   function chooseDpr() {
     const base = window.devicePixelRatio || 1;
@@ -999,12 +1141,17 @@ button.primary {
   }
 
   function resize() {
+    state.cssWidth = window.innerWidth;
+    state.cssHeight = window.innerHeight;
     state.dpr = chooseDpr();
-    state.width = Math.max(1, Math.floor(window.innerWidth * state.dpr));
-    state.height = Math.max(1, Math.floor(window.innerHeight * state.dpr));
+
+    state.width = Math.max(1, Math.floor(state.cssWidth * state.dpr));
+    state.height = Math.max(1, Math.floor(state.cssHeight * state.dpr));
 
     canvas.width = state.width;
     canvas.height = state.height;
+    particleCanvas.width = state.width;
+    particleCanvas.height = state.height;
 
     gl.viewport(0, 0, state.width, state.height);
 
@@ -1014,6 +1161,68 @@ button.primary {
       state.targetPointerX = state.pointerX;
       state.targetPointerY = state.pointerY;
     }
+
+    configureParticles();
+  }
+
+  function configureParticles() {
+    const mobile = Math.min(window.innerWidth, window.innerHeight) < 760;
+    state.maxParticles = mobile ? 330 : 620;
+    state.particleScale = mobile ? 0.8 : 1.0;
+
+    while (particles.length < state.maxParticles) {
+      particles.push(createParticle(true));
+    }
+
+    while (particles.length > state.maxParticles) {
+      particles.pop();
+    }
+
+    state.particleCount = particles.length;
+  }
+
+  function createParticle(randomiseAll) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = randomiseAll ? rand(0.08, 0.92) : rand(0.18, 0.35);
+    const cx = state.width * 0.5;
+    const cy = state.height * 0.5;
+    const spread = Math.min(state.width, state.height) * 0.5;
+
+    return {
+      x: cx + Math.cos(angle) * radius * spread,
+      y: cy + Math.sin(angle) * radius * spread,
+      px: cx,
+      py: cy,
+      vx: -Math.sin(angle) * rand(0.15, 0.7),
+      vy: Math.cos(angle) * rand(0.15, 0.7),
+      life: rand(0.25, 1),
+      age: rand(0, 100),
+      size: rand(0.6, 2.1),
+      hue: rand(175, 285),
+      orbit: rand(0.2, 1.2),
+      drag: rand(0.970, 0.992),
+      seed: Math.random() * 1000
+    };
+  }
+
+  function resetParticle(p, burst) {
+    const angle = Math.random() * Math.PI * 2;
+    const cx = state.width * 0.5;
+    const cy = state.height * 0.5;
+    const spread = Math.min(state.width, state.height) * (burst ? rand(0.08, 0.18) : rand(0.15, 0.92));
+
+    p.x = cx + Math.cos(angle) * spread;
+    p.y = cy + Math.sin(angle) * spread;
+    p.px = p.x;
+    p.py = p.y;
+    p.vx = -Math.sin(angle) * rand(0.15, 0.9);
+    p.vy = Math.cos(angle) * rand(0.15, 0.9);
+    p.life = rand(0.35, 1);
+    p.age = 0;
+    p.size = rand(0.5, 2.3);
+    p.hue = rand(175, 285);
+    p.orbit = rand(0.2, 1.2);
+    p.drag = rand(0.970, 0.992);
   }
 
   function setPointer(clientX, clientY) {
@@ -1027,7 +1236,7 @@ button.primary {
 
   function onPointerDown(event) {
     state.down = 1;
-    state.pulseTarget = 1;
+    state.pulseTarget = Math.max(state.pulseTarget, 1);
     setPointer(event.clientX, event.clientY);
   }
 
@@ -1046,13 +1255,29 @@ button.primary {
     const touch = event.touches && event.touches[0];
     if (!touch) return;
     state.down = 1;
-    state.pulseTarget = 1;
+    state.pulseTarget = Math.max(state.pulseTarget, 1);
     setPointer(touch.clientX, touch.clientY);
     event.preventDefault();
   }
 
   function onTouchEnd() {
     state.down = 0;
+  }
+
+  function setMode(mode) {
+    state.mode = mode;
+    state.targetModeValue = modes[mode];
+
+    modeEls.forEach((el) => {
+      el.classList.toggle("active", el.dataset.mode === mode);
+    });
+
+    eventModeEl.textContent = mode.toUpperCase();
+
+    if (mode === "calm") addLog("STATE", "returned to controlled orbital drift");
+    if (mode === "storm") addLog("STATE", "charged turbulence rising across the field");
+    if (mode === "collapse") addLog("STATE", "gravity core compressing matter stream");
+    if (mode === "bloom") addLog("STATE", "radiant expansion unlocked");
   }
 
   window.addEventListener("resize", resize, { passive: true });
@@ -1068,6 +1293,7 @@ button.primary {
   pulseBtn.addEventListener("click", () => {
     state.pulseTarget = 1.4;
     state.down = 1;
+    addLog("PULSE", "manual field wave injected");
     setTimeout(() => {
       state.down = 0;
     }, 170);
@@ -1077,41 +1303,182 @@ button.primary {
     state.targetPointerX = state.width * 0.5;
     state.targetPointerY = state.height * 0.5;
     state.pulseTarget = 0.8;
+    addLog("RECENTER", "singularity anchor restored");
   });
 
   qualityBtn.addEventListener("click", () => {
     if (state.quality === 1) {
       state.quality = 0.78;
       qualityBtn.textContent = "Boost";
+      addLog("QUALITY", "mobile-safe mode enabled");
     } else {
       state.quality = 1;
       qualityBtn.textContent = "Quality";
+      addLog("QUALITY", "high-resolution pass restored");
     }
 
     resize();
   });
 
+  modeEls.forEach((el) => {
+    el.addEventListener("click", () => setMode(el.dataset.mode));
+  });
+
+  function updateParticles(now, dt) {
+    const ctx = particleCtx;
+    if (!ctx) return;
+
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "rgba(2, 3, 10, 0.13)";
+    ctx.fillRect(0, 0, state.width, state.height);
+
+    ctx.globalCompositeOperation = "lighter";
+
+    const cx = state.width * 0.5;
+    const cy = state.height * 0.5;
+    const px = state.pointerX;
+    const py = state.pointerY;
+    const mode = state.mode;
+
+    let modeGravity = 0.018;
+    let modeOrbit = 0.018;
+    let modeNoise = 0.16;
+    let modeExpansion = 0;
+
+    if (mode === "storm") {
+      modeGravity = 0.024;
+      modeOrbit = 0.035;
+      modeNoise = 0.46;
+    }
+
+    if (mode === "collapse") {
+      modeGravity = 0.065;
+      modeOrbit = 0.045;
+      modeNoise = 0.18;
+    }
+
+    if (mode === "bloom") {
+      modeGravity = 0.006;
+      modeOrbit = 0.012;
+      modeNoise = 0.32;
+      modeExpansion = 0.038;
+    }
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+
+      p.age += dt;
+      p.px = p.x;
+      p.py = p.y;
+
+      const dx = cx - p.x;
+      const dy = cy - p.y;
+      const dist = Math.sqrt(dx * dx + dy * dy) + 0.001;
+      const nx = dx / dist;
+      const ny = dy / dist;
+
+      const mdx = px - p.x;
+      const mdy = py - p.y;
+      const md = Math.sqrt(mdx * mdx + mdy * mdy) + 0.001;
+      const mnx = mdx / md;
+      const mny = mdy / md;
+
+      const swirlX = -ny;
+      const swirlY = nx;
+
+      const pointerPull = state.down ? 0.24 / Math.max(60, md) : 0.035 / Math.max(80, md);
+      const pulseKick = state.pulse * 0.035;
+
+      const noise =
+        Math.sin(p.seed + now * 0.0016 + p.y * 0.003) *
+        Math.cos(p.seed * 1.7 + now * 0.0011 + p.x * 0.002);
+
+      p.vx += nx * modeGravity * state.dpr;
+      p.vy += ny * modeGravity * state.dpr;
+      p.vx += swirlX * modeOrbit * p.orbit * state.dpr;
+      p.vy += swirlY * modeOrbit * p.orbit * state.dpr;
+      p.vx += mnx * pointerPull * state.dpr;
+      p.vy += mny * pointerPull * state.dpr;
+      p.vx += -nx * modeExpansion * state.dpr;
+      p.vy += -ny * modeExpansion * state.dpr;
+      p.vx += noise * modeNoise * state.dpr;
+      p.vy += Math.cos(noise + p.seed) * modeNoise * 0.7 * state.dpr;
+      p.vx += -nx * pulseKick * state.dpr;
+      p.vy += -ny * pulseKick * state.dpr;
+
+      p.vx *= p.drag;
+      p.vy *= p.drag;
+
+      p.x += p.vx * dt * 60;
+      p.y += p.vy * dt * 60;
+
+      const out =
+        p.x < -80 ||
+        p.x > state.width + 80 ||
+        p.y < -80 ||
+        p.y > state.height + 80 ||
+        dist < 18 ||
+        p.age > 80;
+
+      if (out) resetParticle(p, mode === "bloom");
+
+      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      const alpha = Math.min(0.85, 0.05 + speed * 0.06) * p.life;
+      const hueShift =
+        mode === "storm" ? 38 :
+        mode === "collapse" ? 85 :
+        mode === "bloom" ? -55 :
+        0;
+
+      ctx.strokeStyle = `hsla(${p.hue + hueShift}, 96%, ${58 + Math.min(22, speed * 4)}%, ${alpha})`;
+      ctx.lineWidth = Math.max(0.35, p.size * state.particleScale * state.dpr);
+      ctx.beginPath();
+      ctx.moveTo(p.px, p.py);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+
+      if (i % 9 === 0) {
+        ctx.fillStyle = `hsla(${p.hue + hueShift}, 100%, 72%, ${alpha * 0.65})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 1.2 * state.dpr, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    ctx.globalCompositeOperation = "source-over";
+  }
+
   function updateHud(time, dt) {
     const speed = Math.hypot(state.velocityX, state.velocityY) / Math.max(state.height, 1);
-    const downBoost = state.down * 26;
     const pulseBoost = state.pulse * 20;
+
+    const modeEnergy =
+      state.mode === "calm" ? 0 :
+      state.mode === "storm" ? 22 :
+      state.mode === "collapse" ? 36 :
+      12;
 
     state.coherence =
       72 +
       Math.sin(time * 0.0008) * 8 -
       Math.min(18, speed * 22) +
-      state.down * 4;
+      state.down * 4 -
+      (state.mode === "storm" ? 10 : 0) +
+      (state.mode === "bloom" ? 8 : 0);
 
     state.gravity =
       0.34 +
       state.down * 0.42 +
       state.pulse * 0.22 +
-      Math.sin(time * 0.001) * 0.04;
+      Math.sin(time * 0.001) * 0.04 +
+      (state.mode === "collapse" ? 0.52 : 0) +
+      (state.mode === "bloom" ? -0.1 : 0);
 
     state.entropy =
       16 +
       Math.min(42, speed * 60) +
       pulseBoost +
+      modeEnergy +
       Math.sin(time * 0.0014 + 2) * 5;
 
     const coherence = Math.max(0, Math.min(100, state.coherence));
@@ -1126,13 +1493,9 @@ button.primary {
     gravityBar.style.setProperty("--v", `${gravity}%`);
     entropyBar.style.setProperty("--v", `${entropy}%`);
 
-    needleEl.style.setProperty(
-      "--a",
-      `${Math.atan2(
-        state.pointerY - state.height * 0.5,
-        state.pointerX - state.width * 0.5
-      ) * 180 / Math.PI + 90}deg`
-    );
+    radarEl.style.setProperty("--radar", `${time * 0.06}deg`);
+    radarEl.style.setProperty("--rx", `${(state.pointerX / state.width) * 100}%`);
+    radarEl.style.setProperty("--ry", `${100 - (state.pointerY / state.height) * 100}%`);
 
     signalBars.forEach((bar, index) => {
       const wave =
@@ -1140,7 +1503,8 @@ button.primary {
         Math.sin(time * 0.0017 + index * 1.8) * 0.5;
 
       const reactive = state.down * Math.sin(index * 1.9 + time * 0.02);
-      const h = 8 + Math.abs(wave + reactive) * 28 + state.pulse * 18;
+      const modeAmp = state.mode === "storm" ? 13 : state.mode === "collapse" ? 20 : state.mode === "bloom" ? 10 : 0;
+      const h = 8 + Math.abs(wave + reactive) * 28 + state.pulse * 18 + modeAmp;
       bar.style.height = `${h}px`;
       bar.style.opacity = `${0.45 + Math.min(0.5, h / 70)}`;
     });
@@ -1151,6 +1515,10 @@ button.primary {
       fpsEl.textContent = `${state.fps} FPS`;
       state.fpsFrames = 0;
       state.fpsTime = time;
+
+      if (state.fps < 35 && state.quality === 1) {
+        addLog("PERF", "low FPS detected — tap Quality if needed");
+      }
     }
   }
 
@@ -1171,6 +1539,9 @@ button.primary {
     state.pulseTarget *= 0.9;
     state.pulse *= 0.965;
 
+    state.modeValue += (state.targetModeValue - state.modeValue) * 0.04;
+    state.modeMix += (1 - state.modeMix) * 0.02;
+
     const breath = 0.5 + 0.5 * Math.sin(now * 0.0012);
 
     gl.uniform2f(uniforms.resolution, state.width, state.height);
@@ -1182,15 +1553,21 @@ button.primary {
     gl.uniform1f(uniforms.quality, state.quality);
     gl.uniform1f(uniforms.aspect, state.width / Math.max(state.height, 1));
     gl.uniform1f(uniforms.breath, breath);
+    gl.uniform1f(uniforms.mode, state.modeValue);
+    gl.uniform1f(uniforms.modeMix, state.modeMix);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
+    updateParticles(now, dt);
     updateHud(now, dt);
 
     requestAnimationFrame(render);
   }
 
   resize();
+  configureParticles();
+  addLog("BOOT", "visual core online");
+  addLog("LAYER", "particle organism attached");
 
   setTimeout(() => {
     boot.classList.add("done");
